@@ -22,10 +22,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="color-scheme" content="dark light" />
-        <title>App Template</title>
+        <title>Maka Integrated Technology Limited</title>
         <meta
           name="description"
-          content="A Vite + React Router starter template."
+          content="Maka Integrated Technology Limited — a global technology, innovation, and product development company delivering transformative digital solutions, technology education, and talent development worldwide."
         />
         <Meta />
         <Links />
