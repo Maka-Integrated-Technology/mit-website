@@ -9,13 +9,12 @@ import {
   Award,
   BookOpen,
 } from "lucide-react";
-import { Badge } from "~/components/ui/badge";
-import { Card, CardContent } from "~/components/ui/card";
 import type { LucideIcon } from "lucide-react";
 
 type TalentProgram = {
   icon: LucideIcon;
   title: string;
+  description: string;
 };
 
 const LEARNING_AREAS = [
@@ -38,91 +37,120 @@ const LEARNING_AREAS = [
 ];
 
 const TALENT_PROGRAMS: TalentProgram[] = [
-  { icon: Briefcase, title: "Internship Programs" },
-  { icon: GraduationCap, title: "Graduate Trainee Programs" },
-  { icon: Heart, title: "Volunteer Opportunities" },
-  { icon: Users, title: "Tech Mentorship Programs" },
-  { icon: TrendingUp, title: "Career Development Programs" },
-  { icon: Building2, title: "Industry Experience Programs" },
-  { icon: Star, title: "Professional Coaching" },
-  { icon: Award, title: "Leadership Development Programs" },
+  {
+    icon: Briefcase,
+    title: "Internship Programs",
+    description: "Hands-on industry experience",
+  },
+  {
+    icon: GraduationCap,
+    title: "Graduate Trainee Programs",
+    description: "Structured career entry pathways",
+  },
+  {
+    icon: Heart,
+    title: "Volunteer Opportunities",
+    description: "Give back while you grow",
+  },
+  {
+    icon: Users,
+    title: "Tech Mentorship Programs",
+    description: "Guidance from industry experts",
+  },
+  {
+    icon: TrendingUp,
+    title: "Career Development Programs",
+    description: "Accelerate your professional growth",
+  },
+  {
+    icon: Building2,
+    title: "Industry Experience Programs",
+    description: "Real-world project exposure",
+  },
+  {
+    icon: Star,
+    title: "Professional Coaching",
+    description: "One-on-one performance coaching",
+  },
+  {
+    icon: Award,
+    title: "Leadership Development",
+    description: "Building tomorrow's tech leaders",
+  },
 ];
 
 export default function LearningSection() {
   return (
-    <section id="learning" className="py-20 sm:py-24">
+    <section id="learning" className="bg-brand-dark py-24 sm:py-28">
       <div className="max-w-content mx-auto px-4 sm:px-6">
-        <div className="mb-12 text-center">
-          <Badge variant="outline" className="mb-4">
+        {/* Header */}
+        <div className="mb-14 text-center">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/8 px-5 py-1.5 text-xs text-white/70 mb-5">
+            <BookOpen className="size-3.5" />
             Grow With Us
-          </Badge>
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            Maka <span className="text-primary">Learning Platform</span>
+          </span>
+          <h2 className="font-display text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
+            Maka Learning Platform
           </h2>
-          <p className="text-muted-foreground mx-auto mt-4 max-w-xl">
-            Our technology education and talent development initiative created
-            to empower individuals with in-demand digital skills through
-            learning, mentorship, practical projects, career guidance, and
-            industry exposure.
+          <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-white/65">
+            Our technology education and talent development initiative empowering
+            individuals with in-demand digital skills through learning,
+            mentorship, practical projects, career guidance, and industry
+            exposure.
           </p>
         </div>
 
-        <div className="mb-16">
-          <div className="bg-card border-border overflow-hidden rounded-2xl border">
-            <div className="border-border flex items-center gap-3 border-b px-6 py-4">
-              <div className="bg-primary/10 flex size-9 items-center justify-center rounded-lg">
-                <BookOpen className="text-primary size-4" strokeWidth={1.5} />
-              </div>
-              <div>
-                <h3 className="text-foreground font-semibold">
-                  Training Areas
-                </h3>
-                <p className="text-muted-foreground text-xs">
-                  {LEARNING_AREAS.length} in-demand technology disciplines
-                </p>
-              </div>
+        {/* Training areas */}
+        <div className="bg-brand-dark-lighter mb-16 overflow-hidden rounded-3xl border border-white/10 p-8">
+          <div className="mb-6 flex items-center gap-3">
+            <div className="flex size-9 items-center justify-center rounded-xl bg-white/10">
+              <BookOpen className="size-4 text-white/70" strokeWidth={1.5} />
             </div>
-            <div className="flex flex-wrap gap-2.5 p-6">
-              {LEARNING_AREAS.map((area) => (
-                <span
-                  key={area}
-                  className="bg-primary/10 text-primary rounded-full px-4 py-1.5 text-sm font-medium"
-                >
-                  {area}
-                </span>
-              ))}
+            <div>
+              <p className="text-sm font-semibold text-white">Training Areas</p>
+              <p className="text-xs text-white/45">
+                {LEARNING_AREAS.length} in-demand technology disciplines
+              </p>
             </div>
+          </div>
+          <div className="flex flex-wrap gap-2.5">
+            {LEARNING_AREAS.map((area) => (
+              <span
+                key={area}
+                className="rounded-full border border-white/15 bg-white/8 px-4 py-1.5 text-sm text-white/80 transition-colors hover:border-primary/50 hover:bg-primary/15 hover:text-white"
+              >
+                {area}
+              </span>
+            ))}
           </div>
         </div>
 
+        {/* Talent programs */}
         <div>
-          <div className="mb-6 text-center">
-            <h3 className="text-foreground text-xl font-bold">
-              Internship, Mentorship &amp; Talent Development
-            </h3>
-            <p className="text-muted-foreground mx-auto mt-2 max-w-xl text-sm">
-              At Maka, we believe that technology growth begins with people. Our
-              talent development initiatives help aspiring professionals gain
-              practical experience, develop industry-relevant skills, and build
-              successful careers in technology.
-            </p>
-          </div>
-
+          <p className="mb-8 text-center text-sm font-semibold tracking-wider text-white/50 uppercase">
+            Internship, Mentorship &amp; Talent Development
+          </p>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {TALENT_PROGRAMS.map((program) => (
-              <Card key={program.title} className="text-center">
-                <CardContent className="flex flex-col items-center gap-3 p-5">
-                  <div className="bg-primary/10 flex size-10 items-center justify-center rounded-xl">
-                    <program.icon
-                      className="text-primary size-5"
-                      strokeWidth={1.5}
-                    />
-                  </div>
-                  <p className="text-foreground text-sm leading-tight font-medium">
+              <div
+                key={program.title}
+                className="group flex flex-col gap-3.5 rounded-3xl border border-white/10 bg-white/5 p-6 transition-all duration-200 hover:border-white/20 hover:bg-white/8"
+              >
+                <div className="flex size-10 items-center justify-center rounded-xl bg-white/10 group-hover:bg-primary/20 transition-colors">
+                  <program.icon
+                    className="size-5 text-white/70 group-hover:text-primary transition-colors"
+                    strokeWidth={1.5}
+                  />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-white">
                     {program.title}
                   </p>
-                </CardContent>
-              </Card>
+                  <p className="mt-1 text-xs text-white/50">
+                    {program.description}
+                  </p>
+                </div>
+              </div>
             ))}
           </div>
         </div>

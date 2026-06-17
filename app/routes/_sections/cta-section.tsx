@@ -1,6 +1,5 @@
 import { ArrowRight, Mail, Globe, Play, Hash } from "lucide-react";
 import { Button } from "~/components/ui/button";
-import { Badge } from "~/components/ui/badge";
 
 const BRAND_POSITIONS = [
   "Technology Solutions Company",
@@ -32,58 +31,56 @@ const SOCIAL_LINKS = [
 export default function CTASection() {
   return (
     <>
-      <section id="contact" className="py-20 sm:py-24">
+      {/* Brand positioning + main CTA */}
+      <section id="contact" className="bg-brand-dark py-24 sm:py-28">
         <div className="max-w-content mx-auto px-4 sm:px-6">
-          <div className="mb-12 text-center">
-            <Badge variant="outline" className="mb-4">
-              Brand Positioning
-            </Badge>
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              Maka is More Than a{" "}
-              <span className="text-primary">Technology Company</span>
-            </h2>
-            <p className="text-muted-foreground mx-auto mt-4 max-w-xl">
-              We are a multidimensional technology organisation building
-              solutions, products, and people that shape the future.
+          {/* Brand positions */}
+          <div className="mb-16 flex flex-col items-center gap-6">
+            <p className="text-xs font-semibold tracking-widest text-white/40 uppercase">
+              Maka is Positioned As
             </p>
+            <div className="flex flex-wrap justify-center gap-2.5">
+              {BRAND_POSITIONS.map((position) => (
+                <span
+                  key={position}
+                  className="rounded-full border border-white/15 bg-white/8 px-4 py-1.5 text-sm text-white/70"
+                >
+                  {position}
+                </span>
+              ))}
+            </div>
           </div>
 
-          <div className="mb-16 flex flex-wrap justify-center gap-3">
-            {BRAND_POSITIONS.map((position) => (
-              <span
-                key={position}
-                className="bg-primary/10 text-primary rounded-full px-4 py-2 text-sm font-medium"
-              >
-                {position}
-              </span>
-            ))}
-          </div>
-
-          <div className="bg-primary text-primary-foreground relative overflow-hidden rounded-3xl px-8 py-16 text-center sm:px-16">
+          {/* Hero CTA panel */}
+          <div className="bg-brand-dark-lighter relative overflow-hidden rounded-3xl border border-white/10 px-8 py-16 text-center sm:px-16">
             <div className="pointer-events-none absolute inset-0" aria-hidden>
-              <div className="absolute top-0 left-1/4 h-72 w-72 rounded-full bg-white/5 blur-2xl" />
-              <div className="absolute right-1/4 bottom-0 h-72 w-72 rounded-full bg-white/5 blur-2xl" />
+              <div className="absolute top-0 left-1/4 h-80 w-80 rounded-full bg-primary/20 blur-3xl" />
+              <div className="absolute right-1/4 bottom-0 h-80 w-80 rounded-full bg-primary/15 blur-3xl" />
             </div>
 
-            <div className="relative flex flex-col items-center gap-6">
+            <div className="relative flex flex-col items-center gap-7">
               <img
                 src="/maka-logo.png"
                 alt="Maka Integrated Technology Limited logo"
                 className="h-16 w-auto object-contain opacity-90"
               />
-              <h3 className="text-3xl font-bold sm:text-4xl">
-                Let&apos;s Build the Future Together
-              </h3>
-              <p className="max-w-lg opacity-90 sm:text-lg">
-                Whether you&apos;re a business seeking digital transformation, a
-                talent looking to grow, or an innovator ready to partner — Maka
-                Integrated Technology Limited is your technology growth partner.
-              </p>
+
+              <div>
+                <h2 className="font-display text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
+                  Let&apos;s Build the Future Together
+                </h2>
+                <p className="mx-auto mt-5 max-w-lg text-base leading-relaxed text-white/65 sm:text-lg">
+                  Whether you&apos;re a business seeking digital transformation,
+                  a talent looking to grow, or an innovator ready to partner —
+                  Maka Integrated Technology Limited is your growth partner.
+                </p>
+              </div>
+
               <div className="flex flex-wrap justify-center gap-3">
                 <Button
                   asChild
                   size="lg"
-                  className="text-primary bg-white hover:bg-white/90"
+                  className="rounded-full bg-primary px-8 text-white hover:bg-primary/90"
                 >
                   <a href="#services">
                     Explore Services
@@ -94,7 +91,7 @@ export default function CTASection() {
                   asChild
                   size="lg"
                   variant="outline"
-                  className="border-white/30 text-white hover:bg-white/10"
+                  className="rounded-full border-white/25 px-8 text-white hover:bg-white/10 hover:text-white"
                 >
                   <a href="mailto:info@makatech.com">
                     <Mail className="size-4" />
@@ -107,19 +104,21 @@ export default function CTASection() {
         </div>
       </section>
 
-      <footer className="border-border bg-card border-t">
-        <div className="max-w-content mx-auto px-4 py-12 sm:px-6">
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-2">
+      {/* Footer */}
+      <footer className="border-t border-white/10 bg-brand-dark pb-8 pt-14">
+        <div className="max-w-content mx-auto px-4 sm:px-6">
+          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+            {/* Brand col */}
+            <div className="flex flex-col gap-5">
+              <div className="flex items-center gap-2.5">
                 <img
                   src="/maka-logo.png"
                   alt="Maka Integrated Technology Limited logo"
                   className="h-8 w-auto object-contain"
                 />
-                <span className="text-primary font-bold">Maka</span>
+                <span className="text-base font-bold text-white">Maka</span>
               </div>
-              <p className="text-muted-foreground text-sm leading-relaxed">
+              <p className="text-sm leading-relaxed text-white/50">
                 Building Innovative Solutions. Empowering Future Talent.
                 Transforming Industries Through Technology.
               </p>
@@ -129,16 +128,17 @@ export default function CTASection() {
                     key={link.label}
                     href={link.href}
                     aria-label={link.label}
-                    className="bg-muted hover:bg-primary/10 hover:text-primary text-muted-foreground flex size-8 items-center justify-center rounded-lg transition-colors"
+                    className="flex size-8 items-center justify-center rounded-lg bg-white/8 text-white/50 transition-colors hover:bg-primary/20 hover:text-primary"
                   >
-                    <link.icon className="size-4" strokeWidth={1.5} />
+                    <link.icon className="size-3.5" strokeWidth={1.5} />
                   </a>
                 ))}
               </div>
             </div>
 
+            {/* Quick links */}
             <div className="flex flex-col gap-3">
-              <h4 className="text-foreground text-sm font-semibold">
+              <h4 className="text-xs font-semibold tracking-wider text-white/40 uppercase">
                 Quick Links
               </h4>
               <nav className="flex flex-col gap-2">
@@ -146,7 +146,7 @@ export default function CTASection() {
                   <a
                     key={link.href}
                     href={link.href}
-                    className="text-muted-foreground hover:text-primary text-sm transition-colors"
+                    className="text-sm text-white/55 transition-colors hover:text-primary"
                   >
                     {link.label}
                   </a>
@@ -154,32 +154,32 @@ export default function CTASection() {
               </nav>
             </div>
 
+            {/* Contact */}
             <div className="flex flex-col gap-3">
-              <h4 className="text-foreground text-sm font-semibold">Contact</h4>
-              <div className="flex flex-col gap-2">
-                <a
-                  href="mailto:info@makatech.com"
-                  className="text-muted-foreground hover:text-primary flex items-center gap-2 text-sm transition-colors"
-                >
-                  <Mail className="size-4 shrink-0" strokeWidth={1.5} />
-                  info@makatech.com
-                </a>
-              </div>
-              <div className="mt-2">
-                <p className="text-muted-foreground text-xs leading-relaxed">
-                  Maka Integrated Technology Limited — A global technology,
-                  innovation, and product development company.
-                </p>
-              </div>
+              <h4 className="text-xs font-semibold tracking-wider text-white/40 uppercase">
+                Contact
+              </h4>
+              <a
+                href="mailto:info@makatech.com"
+                className="flex items-center gap-2 text-sm text-white/55 transition-colors hover:text-primary"
+              >
+                <Mail className="size-4 shrink-0" strokeWidth={1.5} />
+                info@makatech.com
+              </a>
+              <p className="mt-1 text-xs leading-relaxed text-white/35">
+                Maka Integrated Technology Limited — A global technology,
+                innovation, and product development company.
+              </p>
             </div>
           </div>
 
-          <div className="border-border mt-10 flex flex-col items-center justify-between gap-3 border-t pt-6 sm:flex-row">
-            <p className="text-muted-foreground text-xs">
+          {/* Bottom bar */}
+          <div className="mt-12 flex flex-col items-center justify-between gap-3 border-t border-white/8 pt-6 sm:flex-row">
+            <p className="text-xs text-white/30">
               &copy; {new Date().getFullYear()} Maka Integrated Technology
               Limited. All rights reserved.
             </p>
-            <p className="text-muted-foreground text-xs">
+            <p className="text-xs text-white/25">
               Building Innovative Solutions for a Connected World.
             </p>
           </div>

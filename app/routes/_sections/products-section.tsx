@@ -8,9 +8,9 @@ import {
   Rocket,
   Wrench,
   Heart,
+  ArrowRight,
 } from "lucide-react";
 import { Badge } from "~/components/ui/badge";
-import { Card, CardContent } from "~/components/ui/card";
 import type { LucideIcon } from "lucide-react";
 
 type ProcessStep = {
@@ -32,43 +32,43 @@ const PROCESS_STEPS: ProcessStep[] = [
 
 export default function ProductsSection() {
   return (
-    <section id="products" className="bg-muted/40 py-20 sm:py-24">
+    <section id="products" className="bg-background py-24 sm:py-28">
       <div className="max-w-content mx-auto px-4 sm:px-6">
-        <div className="mb-12 text-center">
-          <Badge variant="outline" className="mb-4">
+        <div className="mb-14 text-center">
+          <Badge variant="outline" className="mb-5 rounded-full px-4">
             Innovation at Work
           </Badge>
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+          <h2 className="text-foreground text-3xl font-bold tracking-tight sm:text-4xl">
             Product Development &amp;{" "}
             <span className="text-primary">Innovation</span>
           </h2>
-          <p className="text-muted-foreground mx-auto mt-4 max-w-xl">
-            We develop innovative digital products designed to solve real
-            challenges across healthcare, education, business operations,
-            finance, and emerging technology sectors.
+          <p className="text-muted-foreground mx-auto mt-4 max-w-xl text-base">
+            We develop innovative digital products to solve challenges across
+            healthcare, education, finance, and emerging technology sectors.
           </p>
         </div>
 
-        <div className="mb-16">
-          <h3 className="text-foreground mb-6 text-center text-lg font-semibold">
+        {/* Process steps */}
+        <div className="mb-20">
+          <p className="text-muted-foreground mb-8 text-center text-sm font-semibold tracking-wider uppercase">
             Our Product Development Process
-          </h3>
+          </p>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {PROCESS_STEPS.map((step) => (
               <div
                 key={step.step}
-                className="bg-card border-border flex flex-col items-center gap-3 rounded-xl border p-5 text-center"
+                className="bg-card border-border group flex flex-col items-center gap-3 rounded-3xl border p-6 text-center transition-all duration-200 hover:shadow-md"
               >
-                <div className="bg-primary/10 flex size-10 items-center justify-center rounded-full">
+                <div className="bg-primary/10 group-hover:bg-primary/15 flex size-11 items-center justify-center rounded-2xl transition-colors">
                   <step.icon
-                    className="text-primary size-4"
+                    className="text-primary size-5"
                     strokeWidth={1.5}
                   />
                 </div>
-                <span className="bg-primary/10 text-primary rounded-full px-2.5 py-0.5 text-xs font-bold">
+                <span className="text-primary text-xs font-bold tracking-wider">
                   {String(step.step).padStart(2, "0")}
                 </span>
-                <p className="text-foreground text-sm leading-tight font-medium">
+                <p className="text-foreground text-sm leading-tight font-semibold">
                   {step.title}
                 </p>
               </div>
@@ -76,54 +76,60 @@ export default function ProductsSection() {
           </div>
         </div>
 
+        {/* Product portfolio */}
         <div>
-          <h3 className="text-foreground mb-6 text-center text-lg font-semibold">
+          <p className="text-muted-foreground mb-8 text-center text-sm font-semibold tracking-wider uppercase">
             Product Portfolio
-          </h3>
-          <div className="mx-auto max-w-2xl">
-            <Card className="relative overflow-hidden">
-              <div className="bg-primary/5 pointer-events-none absolute top-0 right-0 h-48 w-48 translate-x-1/3 -translate-y-1/3 rounded-full blur-2xl" />
-              <CardContent className="relative p-8">
-                <div className="flex flex-col gap-5">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <div className="bg-primary/10 flex size-12 items-center justify-center rounded-xl">
-                      <Heart
-                        className="text-primary size-6"
-                        strokeWidth={1.5}
-                      />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h4 className="text-foreground text-xl font-bold">
-                          OHealth+
-                        </h4>
-                        <Badge className="text-xs">In Development</Badge>
-                      </div>
-                      <p className="text-muted-foreground text-sm">
-                        Digital Healthcare Platform
-                      </p>
-                    </div>
+          </p>
+
+          <div className="mx-auto max-w-3xl">
+            <div className="from-primary/8 to-primary/3 border-primary/20 relative overflow-hidden rounded-3xl border bg-gradient-to-br p-10">
+              <div className="pointer-events-none absolute top-0 right-0 h-64 w-64 translate-x-1/3 -translate-y-1/3 rounded-full bg-primary/10 blur-3xl" />
+
+              <div className="relative flex flex-col gap-6">
+                {/* Header */}
+                <div className="flex flex-wrap items-center gap-4">
+                  <div className="bg-primary/15 flex size-14 items-center justify-center rounded-2xl">
+                    <Heart
+                      className="text-primary size-7"
+                      strokeWidth={1.5}
+                    />
                   </div>
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2.5">
+                      <h3 className="text-foreground text-2xl font-bold">
+                        OHealth+
+                      </h3>
+                      <Badge className="rounded-full text-xs">
+                        In Development
+                      </Badge>
+                    </div>
+                    <p className="text-muted-foreground text-sm">
+                      Digital Healthcare Platform
+                    </p>
+                  </div>
+                </div>
 
-                  <p className="text-muted-foreground text-sm leading-relaxed">
-                    OHealth+ is an innovative digital healthcare platform
-                    currently being developed by Maka Integrated Technology
-                    Limited. The platform is designed to improve access to
-                    healthcare services through technology by connecting
-                    patients, healthcare providers, and healthcare resources
-                    within a secure and user-friendly ecosystem.
-                  </p>
+                {/* Description */}
+                <p className="text-muted-foreground text-base leading-relaxed">
+                  OHealth+ is an innovative digital healthcare platform being
+                  developed by Maka Integrated Technology Limited. Designed to
+                  improve access to healthcare services through technology, it
+                  connects patients, healthcare providers, and resources within
+                  a secure, user-friendly ecosystem.
+                </p>
 
-                  <p className="text-muted-foreground text-sm leading-relaxed">
-                    OHealth+ aims to leverage digital innovation to enhance
-                    healthcare accessibility, streamline healthcare experiences,
-                    support healthcare professionals, and contribute to improved
-                    health outcomes. Additional features, partnerships, and
-                    service offerings will be announced as development
-                    progresses.
-                  </p>
+                <p className="text-muted-foreground text-base leading-relaxed">
+                  OHealth+ leverages digital innovation to enhance healthcare
+                  accessibility, streamline experiences, support professionals,
+                  and contribute to improved health outcomes globally.
+                  Additional features, partnerships, and service offerings will
+                  be announced as development progresses.
+                </p>
 
-                  <div className="border-border flex flex-wrap gap-2 border-t pt-4">
+                {/* Tags + CTA */}
+                <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
+                  <div className="flex flex-wrap gap-2">
                     {[
                       "Healthcare Access",
                       "Patient Connect",
@@ -132,15 +138,19 @@ export default function ProductsSection() {
                     ].map((tag) => (
                       <span
                         key={tag}
-                        className="bg-muted text-muted-foreground rounded-full px-3 py-1 text-xs"
+                        className="bg-primary/10 text-primary rounded-full px-3.5 py-1 text-xs font-medium"
                       >
                         {tag}
                       </span>
                     ))}
                   </div>
+                  <span className="text-muted-foreground flex items-center gap-1.5 text-xs">
+                    Stay tuned for updates
+                    <ArrowRight className="size-3" />
+                  </span>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         </div>
       </div>

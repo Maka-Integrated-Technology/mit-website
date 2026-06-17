@@ -6,6 +6,7 @@ import ServicesSection from "./_sections/services-section";
 import ProductsSection from "./_sections/products-section";
 import LearningSection from "./_sections/learning-section";
 import ImpactSection from "./_sections/impact-section";
+import AudienceSection from "./_sections/audience-section";
 import CTASection from "./_sections/cta-section";
 
 export default function HomePage() {
@@ -19,6 +20,7 @@ export default function HomePage() {
       <ProductsSection />
       <LearningSection />
       <ImpactSection />
+      <AudienceSection />
       <CTASection />
     </div>
   );
