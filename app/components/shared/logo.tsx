@@ -1,11 +1,10 @@
 import { Link } from "react-router";
 import { cn } from "~/lib/utils/helpers";
-import { Layers } from "lucide-react";
 
 const logoSizes = {
-  sm: { icon: "size-5", text: "text-lg" },
-  default: { icon: "size-6", text: "text-xl" },
-  lg: { icon: "size-8", text: "text-2xl" },
+  sm: { img: "h-7 w-auto", text: "text-base" },
+  default: { img: "h-8 w-auto", text: "text-lg" },
+  lg: { img: "h-10 w-auto", text: "text-xl" },
 } as const;
 
 type LogoSize = keyof typeof logoSizes;
@@ -30,7 +29,11 @@ function LogoContent({
   const s = logoSizes[size];
   return (
     <div className="flex items-center gap-2">
-      <Layers className={cn(s.icon, "text-primary")} strokeWidth={1.5} />
+      <img
+        src="/maka-logo.png"
+        alt="Maka Integrated Technology Limited logo"
+        className={cn(s.img, "object-contain")}
+      />
       {!iconOnly && (
         <span className={cn("font-bold tracking-tight", s.text)}>
           <span className="text-primary">{label}</span>
@@ -45,7 +48,7 @@ export default function Logo({
   size = "default",
   disabled = false,
   iconOnly = false,
-  label = "AppTemplate",
+  label = "Maka",
 }: Props) {
   const containerClass = cn("flex w-fit items-center", containerClassName);
 
@@ -61,7 +64,7 @@ export default function Logo({
     <Link
       to="/"
       className={containerClass}
-      aria-label={`${label} — Go to homepage`}
+      aria-label="Maka Integrated Technology Limited — Go to homepage"
     >
       <LogoContent size={size} iconOnly={iconOnly} label={label} />
     </Link>
