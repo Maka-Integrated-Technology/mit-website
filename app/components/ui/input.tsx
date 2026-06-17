@@ -11,7 +11,8 @@ const inputWrapperVariants = cva(
 );
 
 export interface InputProps
-  extends Omit<React.ComponentProps<"input">, "color">,
+  extends
+    Omit<React.ComponentProps<"input">, "color">,
     VariantProps<typeof inputWrapperVariants> {
   startAdornment?: React.ReactNode;
   endAdornment?: React.ReactNode;

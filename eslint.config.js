@@ -84,5 +84,5 @@ export default tseslint.config(
         ...globals.node,
       },
     },
-  },
+  }
 );

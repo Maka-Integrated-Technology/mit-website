@@ -37,8 +37,7 @@ export const handleApiError = (
   switch (status) {
     case 400:
       notifyError({
-        message:
-          errorData?.message || "Bad request. Please check your input.",
+        message: errorData?.message || "Bad request. Please check your input.",
       });
       break;
     case 404:

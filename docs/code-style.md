@@ -39,16 +39,19 @@ own all formatting decisions.
 Tailwind class names are sorted automatically by the plugin. Do not sort them
 by hand.
 
+CI enforces formatting with `npm run format:check` and linting with
+`npm run lint`. Both must pass before a pull request can be merged.
+
 ## Naming
 
-| Thing | Convention |
-| -------------------------------- | -------------------- |
-| Files and directories | `kebab-case` |
-| React components | `PascalCase` |
-| Hooks | `camelCase`, `use` prefix |
-| Constants | `SCREAMING_SNAKE_CASE` |
-| Types and interfaces | `PascalCase` |
-| Non-exported helper functions | `camelCase` |
+| Thing                         | Convention                |
+| ----------------------------- | ------------------------- |
+| Files and directories         | `kebab-case`              |
+| React components              | `PascalCase`              |
+| Hooks                         | `camelCase`, `use` prefix |
+| Constants                     | `SCREAMING_SNAKE_CASE`    |
+| Types and interfaces          | `PascalCase`              |
+| Non-exported helper functions | `camelCase`               |
 
 ## Components
 

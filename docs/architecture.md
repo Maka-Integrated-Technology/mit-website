@@ -19,16 +19,16 @@ Routes are registered in `app/routes.ts` using `rr-next-routes`:
 ```ts
 export default nextRoutes({
   ...appRouterStyle,
-  folderName: "./routes/main",
+  folderName: "./routes",
 }) satisfies RouteConfig;
 ```
 
-`rr-next-routes` scans `app/routes/main/` and builds the route config from the
+`rr-next-routes` scans `app/routes/` and builds the route config from the
 file system. Files named `page.tsx` become route components; files named
 `layout.tsx` become nested layouts.
 
 ```
-app/routes/main/
+app/routes/
   layout.tsx          ← root layout (navbar + offline banner)
   page.tsx            ← /
   browse/
@@ -83,7 +83,7 @@ globally:
 new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000,  // 5 minutes
+      staleTime: 5 * 60 * 1000, // 5 minutes
       retry: 2,
       refetchOnMount: false,
     },
@@ -138,3 +138,116 @@ OS-level preference fallback unless you change that.
 `app/components/ui/` contains shadcn-generated Radix primitives. They are
 generic; do not add product-specific logic to them. Product-level composites
 (e.g. `Logo`, `Navbar`) live in `app/components/shared/`.
+
+## Advanced Multi-Route Setup
+
+> Use this only when the project has multiple independent app surfaces or build
+> targets. For single-surface apps the default setup in `app/routes.ts` is
+> sufficient.
+
+When a project needs two or more entirely separate route trees — for example an
+`admin` surface and a `client` surface — you can select the active route folder
+at dev and build time using the `VITE_ROUTE` environment variable.
+
+### Implementation
+
+Replace the contents of `app/routes.ts` with:
+
+```ts
+import type { RouteConfig } from "@react-router/dev/routes";
+import { existsSync } from "node:fs";
+import { resolve } from "node:path";
+import { nextRoutes, appRouterStyle } from "rr-next-routes/react-router";
+
+const DEFAULT_ROUTE = "admin";
+const ROUTE_ALIASES: Record<string, string> = {
+  a: "admin",
+};
+const APP_ROUTES = ["admin", "client"] as const;
+
+type AppRoute = (typeof APP_ROUTES)[number];
+
+function resolveAppRoute(rawRoute = process.env.VITE_ROUTE): AppRoute {
+  const requestedRoute = rawRoute?.trim() || DEFAULT_ROUTE;
+  const route = ROUTE_ALIASES[requestedRoute] ?? requestedRoute;
+
+  if (!APP_ROUTES.includes(route as AppRoute)) {
+    const expectedRoutes = APP_ROUTES.join(", ");
+    throw new Error(
+      `Invalid VITE_ROUTE="${requestedRoute}". Expected one of: ${expectedRoutes}.`
+    );
+  }
+
+  const routeDir = resolve(process.cwd(), "app/routes", route);
+
+  if (!existsSync(routeDir)) {
+    throw new Error(
+      `VITE_ROUTE="${route}" points to missing route directory: ${routeDir}`
+    );
+  }
+
+  return route as AppRoute;
+}
+
+const route = resolveAppRoute();
+
+export default nextRoutes({
+  ...appRouterStyle,
+  folderName: `./routes/${route}`,
+}) satisfies RouteConfig;
+```
+
+Adjust `DEFAULT_ROUTE`, `ROUTE_ALIASES`, and `APP_ROUTES` for the actual folders
+in your project.
+
+### What each part does
+
+| Part                | Purpose                                                                                                                                   |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `DEFAULT_ROUTE`     | Route folder used when `VITE_ROUTE` is not set.                                                                                           |
+| `ROUTE_ALIASES`     | Short aliases mapped to canonical folder names (e.g. `a` → `admin`).                                                                      |
+| `APP_ROUTES`        | Whitelist of valid route folder names.                                                                                                    |
+| `AppRoute`          | TypeScript union derived from `APP_ROUTES` for type-safe returns.                                                                         |
+| `resolveAppRoute()` | Trims the input, applies aliases, validates against the whitelist, checks that the directory exists, and returns the resolved route name. |
+| `nextRoutes()`      | Generates the route tree from the selected folder.                                                                                        |
+
+### Example commands
+
+```bash
+VITE_ROUTE=admin npm run dev
+VITE_ROUTE=client npm run dev
+VITE_ROUTE=admin npm run build
+VITE_ROUTE=client npm run build
+```
+
+### Folder structure
+
+```
+app/routes/
+  admin/
+    layout.tsx
+    page.tsx
+    settings/
+      page.tsx
+  client/
+    layout.tsx
+    page.tsx
+    browse/
+      page.tsx
+```
+
+Keep `APP_ROUTES` in sync with the actual directories under `app/routes/`. A
+missing or misspelled folder name causes `resolveAppRoute` to throw at startup.
+
+### CI for multi-route builds
+
+Projects using this setup should extend the CI workflow with one build step per
+route. See `docs/setup.md` for the CI command reference. A typical extension:
+
+```yaml
+- name: Build (admin)
+  run: VITE_ROUTE=admin npm run build
+
+- name: Build (client)
+  run: VITE_ROUTE=client npm run build
+```

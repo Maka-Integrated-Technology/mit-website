@@ -55,12 +55,11 @@ vite-react-router-template/
 │   │       ├── helpers.ts      # cn, truncate, capitalize, slugify, …
 │   │       ├── query-keys.ts   # Centralised TanStack Query key factory
 │   │       └── toast.ts        # notifySuccess / notifyError / notifyInfo
-│   ├── routes/
-│   │   └── main/               # File-based route tree (rr-next-routes)
-│   │       ├── layout.tsx      # Root layout — navbar + offline banner
-│   │       ├── page.tsx        # / — landing / feature overview
-│   │       └── browse/
-│   │           └── page.tsx    # /browse — example list with search
+│   ├── routes/                 # File-based route tree (rr-next-routes)
+│   │   ├── layout.tsx          # Root layout — navbar + offline banner
+│   │   ├── page.tsx            # / — landing / feature overview
+│   │   └── browse/
+│   │       └── page.tsx        # /browse — example list with search
 │   ├── styles/
 │   │   └── global.css          # Tailwind v4 imports + CSS design tokens
 │   ├── types/
@@ -71,7 +70,8 @@ vite-react-router-template/
 │   ├── architecture.md
 │   ├── code-style.md
 │   ├── folder-structure.md     # (this file)
-│   └── setup.md
+│   ├── setup.md
+│   └── workflow.md
 ├── .dockerignore
 ├── .env.example
 ├── AGENTS.md                   # Workflow conventions for AI coding agents
@@ -110,14 +110,15 @@ exports exactly one provider component plus (if needed) a hook.
 All code for a single API domain — types, HTTP calls, and query/mutation hooks.
 A page imports from `hooks.ts` only; it never calls `axios` directly.
 
-### `app/routes/main/`
+### `app/routes/`
 
 File-based routes scanned by `rr-next-routes`. The file system is the routing
 config. `page.tsx` = route component; `layout.tsx` = wrapping layout.
 
 For complex pages, create a `_sections/` subfolder alongside the page file to
 hold sub-components that are rendered only by that page. The `_sections/`
-prefix is conventional — React Router ignores it as a route segment.
+prefix is conventional — React Router ignores it as a route segment. See
+[workflow.md](./workflow.md) for the full route folder convention.
 
 ### `app/hooks/`
 

@@ -26,13 +26,26 @@ npm run dev
 
 The dev server runs at **http://localhost:5100**.
 
+## Quality checks
+
+| Check      | Command                | CI  |
+| ---------- | ---------------------- | --- |
+| Format     | `npm run format:check` | ✓   |
+| Lint       | `npm run lint`         | ✓   |
+| Type-check | `npm run typecheck`    | ✓   |
+| Build      | `npm run build`        | ✓   |
+
+CI runs on every pull request to `main` via `.github/workflows/ci.yml`.
+
 ## Documentation
 
 - [Setup & Local Development](docs/setup.md) — prerequisites, environment
-  variables, dev server, build, and Docker.
-- [Architecture](docs/architecture.md) — routing, providers, API layer, and
-  data-fetching patterns.
+  variables, dev server, build, CI, and Docker.
+- [Architecture](docs/architecture.md) — routing, providers, API layer,
+  data-fetching patterns, and advanced multi-route setup.
 - [Folder Structure](docs/folder-structure.md) — repository layout and what
   lives where.
 - [Code Style & Conventions](docs/code-style.md) — TypeScript, formatting, UI,
   and feature conventions.
+- [Workflow & Implementation Patterns](docs/workflow.md) — route structure,
+  URL state, search/filter patterns, forms, mutations, and feature checklist.

@@ -23,9 +23,9 @@ cp .env.example .env.local
 
 The template reads the following variable (client-side, prefixed with `VITE_`):
 
-| Variable            | Required | Description                                                          |
-| ------------------- | -------- | -------------------------------------------------------------------- |
-| `VITE_API_BASE_URL` | Yes      | Base URL for all API requests. Read by `app/lib/config/axios.ts`.   |
+| Variable            | Required | Description                                                       |
+| ------------------- | -------- | ----------------------------------------------------------------- |
+| `VITE_API_BASE_URL` | Yes      | Base URL for all API requests. Read by `app/lib/config/axios.ts`. |
 
 ## Development server
 
@@ -117,7 +117,24 @@ docker run -p 3000:3000 vite-react-router-template
 
 > **Note:** `VITE_*` environment variables are inlined into the client bundle
 > at build time by Vite. They must be present during `docker build` / `npm run
-> build`, not only at runtime.
+build`, not only at runtime.
+
+## CI
+
+`.github/workflows/ci.yml` runs on every pull request to `main`. It executes
+the same commands you should run locally before pushing:
+
+```bash
+npm run format:check   # fails if any file is not Prettier-formatted
+npm run lint           # ESLint across all TypeScript/TSX files
+npm run typecheck      # React Router typegen + tsc strict
+npm run build          # production bundle (build/client)
+```
+
+All four must pass before a PR can be merged.
+
+For projects using the [advanced multi-route setup](./architecture.md#advanced-multi-route-setup),
+extend the workflow with a build step per route surface.
 
 ## Docker Compose
 

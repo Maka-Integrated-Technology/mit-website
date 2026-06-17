@@ -56,27 +56,23 @@ export default function HomePage() {
     <div className="flex flex-col">
       {/* Hero */}
       <section className="relative flex min-h-[420px] flex-col items-center justify-center overflow-hidden px-4 py-20 text-center sm:py-28">
-        <div
-          className="pointer-events-none absolute inset-0 -z-10"
-          aria-hidden
-        >
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-primary/8 blur-[120px]" />
+        <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden>
+          <div className="bg-primary/8 absolute top-1/2 left-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[120px]" />
         </div>
 
-        <div className="flex flex-col items-center gap-6 max-w-2xl">
+        <div className="flex max-w-2xl flex-col items-center gap-6">
           <Badge variant="outline" className="gap-1.5">
             <Layers className="size-3.5" />
             Vite · React Router · TypeScript
           </Badge>
 
-          <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
-            Start building{" "}
-            <span className="text-primary">faster.</span>
+          <h1 className="text-4xl leading-tight font-bold tracking-tight sm:text-5xl lg:text-6xl">
+            Start building <span className="text-primary">faster.</span>
           </h1>
 
           <p className="text-muted-foreground max-w-lg text-lg">
-            A production-ready starter with routing, data fetching, theming,
-            and a full UI component library — wired up and ready to go.
+            A production-ready starter with routing, data fetching, theming, and
+            a full UI component library — wired up and ready to go.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3">
@@ -100,14 +96,14 @@ export default function HomePage() {
       </section>
 
       {/* Feature grid */}
-      <section className="mx-auto w-full max-w-content px-4 pb-20 sm:px-6">
+      <section className="max-w-content mx-auto w-full px-4 pb-20 sm:px-6">
         <h2 className="mb-6 text-lg font-semibold">What&apos;s included</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map((f) => (
             <Card key={f.title}>
               <CardHeader>
-                <div className="mb-1 flex size-9 items-center justify-center rounded-lg bg-primary/10">
-                  <f.icon className="size-5 text-primary" strokeWidth={1.5} />
+                <div className="bg-primary/10 mb-1 flex size-9 items-center justify-center rounded-lg">
+                  <f.icon className="text-primary size-5" strokeWidth={1.5} />
                 </div>
                 <CardTitle>{f.title}</CardTitle>
               </CardHeader>
