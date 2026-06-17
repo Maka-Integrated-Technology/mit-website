@@ -1,0 +1,11 @@
+export type SearchParams = {
+  [key: string]: string | number | boolean | undefined;
+};
+
+export const QUERY_KEYS = {
+  example: {
+    all: ["example"] as const,
+    list: (params: SearchParams) => ["example", "list", params] as const,
+    byId: (id: string | number) => ["example", id] as const,
+  },
+};
