@@ -1,6 +1,7 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { debounce } from "~/lib/utils/helpers";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useDebouncedCallback<T extends (...args: any[]) => any>(
   callback: T,
   delay: number
@@ -11,11 +12,14 @@ export function useDebouncedCallback<T extends (...args: any[]) => any>(
     callbackRef.current = callback;
   }, [callback]);
 
-  const debouncedCallback = useRef(
-    debounce((...args: Parameters<T>) => {
-      callbackRef.current(...args);
-    }, delay)
-  ).current;
+  const debouncedCallback = useMemo(
+    () =>
+      // eslint-disable-next-line react-hooks/refs
+      debounce((...args: Parameters<T>) => {
+        callbackRef.current(...args);
+      }, delay),
+    [delay]
+  );
 
   return debouncedCallback;
 }

@@ -8,7 +8,7 @@ export const exampleApi = {
     params: ExampleListParams
   ): Promise<PaginatedResponse<ExampleItem>> => {
     const { data } = await axiosInstance.get(
-      `/api/example${buildQueryString(params as Record<string, any>)}`
+      `/api/example${buildQueryString(params as Record<string, string | number | undefined>)}`
     );
     return data;
   },

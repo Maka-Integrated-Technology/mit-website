@@ -4,6 +4,31 @@ Reusable conventions for building routes and components in this codebase.
 
 ---
 
+## Linting workflow
+
+After every code change, run:
+
+```bash
+npm run lint
+```
+
+Use auto-fix first for mechanical issues, then resolve errors manually:
+
+```bash
+npm run lint:fix
+npm run lint
+```
+
+Also run typecheck before committing:
+
+```bash
+npm run typecheck
+```
+
+Do not commit code that fails either check.
+
+---
+
 ## Code style
 
 - Do not add section-divider comments (e.g. `// ─── Section name ───`) or comments that restate what the code already shows.

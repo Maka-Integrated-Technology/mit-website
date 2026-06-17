@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Switch } from "~/components/ui/switch";
@@ -6,13 +5,7 @@ import { cn } from "~/lib/utils/helpers";
 
 export function NavbarThemeToggle() {
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const isDark = mounted && theme === "dark";
+  const isDark = theme === "dark";
 
   return (
     <div
@@ -27,16 +20,9 @@ export function NavbarThemeToggle() {
         )}
       />
       <Switch
-        aria-label={
-          mounted
-            ? isDark
-              ? "Switch to light theme"
-              : "Switch to dark theme"
-            : "Toggle theme"
-        }
-        checked={mounted ? isDark : true}
+        aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+        checked={isDark}
         onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
-        disabled={!mounted}
         size="sm"
       />
       <Moon

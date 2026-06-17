@@ -101,7 +101,7 @@ export default function HomePage() {
 
       {/* Feature grid */}
       <section className="mx-auto w-full max-w-content px-4 pb-20 sm:px-6">
-        <h2 className="mb-6 text-lg font-semibold">What's included</h2>
+        <h2 className="mb-6 text-lg font-semibold">What&apos;s included</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map((f) => (
             <Card key={f.title}>

@@ -16,6 +16,7 @@ export function capitalize(str: string) {
   return String(str[0]).toUpperCase() + String(str).slice(1);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function debounce<T extends (...args: any[]) => any>(
   func: T,
   wait: number,
@@ -35,11 +36,13 @@ export function debounce<T extends (...args: any[]) => any>(
   };
 }
 
-export function buildQueryString(params: Record<string, any>): string {
-  const filteredParams = Object.fromEntries(
-    Object.entries(params).filter(([, v]) => v !== undefined && v !== "")
-  );
-  const query = new URLSearchParams(filteredParams).toString();
+export function buildQueryString(
+  params: Record<string, string | number | boolean | null | undefined>
+): string {
+  const entries = Object.entries(params)
+    .filter(([, v]) => v !== undefined && v !== null && v !== "")
+    .map<[string, string]>(([k, v]) => [k, String(v)]);
+  const query = new URLSearchParams(entries).toString();
   return query ? `?${query}` : "";
 }
 

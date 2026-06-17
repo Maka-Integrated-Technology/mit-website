@@ -51,6 +51,23 @@ npm run typecheck
 
 This runs `react-router typegen && tsc`.
 
+## Linting
+
+```bash
+npm run lint
+```
+
+This runs ESLint across all TypeScript and TSX source files. Run after every
+code change before committing.
+
+```bash
+npm run lint:fix
+```
+
+This runs ESLint with `--fix` to apply safe automatic corrections (import
+ordering, unused-var cleanup, etc.). Use this first, then resolve any remaining
+errors manually.
+
 ## Formatting
 
 ```bash

@@ -11,6 +11,25 @@
 - Use the `~/*` path alias for all imports from `app/` — no relative `../../`
   climbs.
 
+## Linting
+
+ESLint is configured with flat config (`eslint.config.js`). It enforces:
+
+- TypeScript rules via `typescript-eslint` (recommended + strict)
+- React and JSX rules via `eslint-plugin-react` (with JSX runtime support)
+- React Hooks rules via `eslint-plugin-react-hooks`
+- Vite fast-refresh rules via `eslint-plugin-react-refresh`
+
+Run after code changes:
+
+```bash
+npm run lint        # report all issues
+npm run lint:fix    # apply safe automatic fixes, then resolve the rest manually
+```
+
+Agents should run `npm run lint` after every code change and use `npm run lint:fix`
+for safe automatic corrections before manually resolving any remaining errors.
+
 ## Formatting
 
 Prettier runs with `prettier-plugin-tailwindcss`. Run `npm run format` before
