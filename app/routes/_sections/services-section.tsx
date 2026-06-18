@@ -124,7 +124,7 @@ export default function ServicesSection() {
                     strokeWidth={1.5}
                   />
                 </div>
-                <h3 className="text-foreground font-semibold leading-snug">
+                <h3 className="text-foreground leading-snug font-semibold">
                   {service.title}
                 </h3>
                 <ul className="flex flex-1 flex-col gap-2">

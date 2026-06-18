@@ -85,7 +85,7 @@ export default function LearningSection() {
       <div className="max-w-content mx-auto px-4 sm:px-6">
         {/* Header */}
         <div className="mb-14 text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/8 px-5 py-1.5 text-xs text-white/70 mb-5">
+          <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/8 px-5 py-1.5 text-xs text-white/70">
             <BookOpen className="size-3.5" />
             Grow With Us
           </span>
@@ -93,10 +93,10 @@ export default function LearningSection() {
             Maka Learning Platform
           </h2>
           <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-white/65">
-            Our technology education and talent development initiative empowering
-            individuals with in-demand digital skills through learning,
-            mentorship, practical projects, career guidance, and industry
-            exposure.
+            Our technology education and talent development initiative
+            empowering individuals with in-demand digital skills through
+            learning, mentorship, practical projects, career guidance, and
+            industry exposure.
           </p>
         </div>
 
@@ -117,7 +117,7 @@ export default function LearningSection() {
             {LEARNING_AREAS.map((area) => (
               <span
                 key={area}
-                className="rounded-full border border-white/15 bg-white/8 px-4 py-1.5 text-sm text-white/80 transition-colors hover:border-primary/50 hover:bg-primary/15 hover:text-white"
+                className="hover:border-primary/50 hover:bg-primary/15 rounded-full border border-white/15 bg-white/8 px-4 py-1.5 text-sm text-white/80 transition-colors hover:text-white"
               >
                 {area}
               </span>
@@ -136,9 +136,9 @@ export default function LearningSection() {
                 key={program.title}
                 className="group flex flex-col gap-3.5 rounded-3xl border border-white/10 bg-white/5 p-6 transition-all duration-200 hover:border-white/20 hover:bg-white/8"
               >
-                <div className="flex size-10 items-center justify-center rounded-xl bg-white/10 group-hover:bg-primary/20 transition-colors">
+                <div className="group-hover:bg-primary/20 flex size-10 items-center justify-center rounded-xl bg-white/10 transition-colors">
                   <program.icon
-                    className="size-5 text-white/70 group-hover:text-primary transition-colors"
+                    className="group-hover:text-primary size-5 text-white/70 transition-colors"
                     strokeWidth={1.5}
                   />
                 </div>

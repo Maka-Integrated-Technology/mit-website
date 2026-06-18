@@ -14,17 +14,17 @@ export default function HeroSection() {
     <section className="bg-brand-dark relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 py-28 text-center sm:py-32">
       {/* Glow orbs */}
       <div className="pointer-events-none absolute inset-0" aria-hidden>
-        <div className="absolute top-1/4 left-1/2 h-[700px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/20 blur-[160px]" />
-        <div className="absolute bottom-0 right-0 h-[450px] w-[450px] rounded-full bg-primary/10 blur-[130px]" />
-        <div className="absolute top-0 left-0 h-[350px] w-[350px] rounded-full bg-primary/8 blur-[120px]" />
+        <div className="bg-primary/20 absolute top-1/4 left-1/2 h-[700px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[160px]" />
+        <div className="bg-primary/10 absolute right-0 bottom-0 h-[450px] w-[450px] rounded-full blur-[130px]" />
+        <div className="bg-primary/8 absolute top-0 left-0 h-[350px] w-[350px] rounded-full blur-[120px]" />
       </div>
 
       <div className="relative z-10 flex max-w-5xl flex-col items-center gap-8">
         {/* Logo */}
         <img
-          src="/maka-logo.png"
+          src="/maka-logo-transparent.png"
           alt="Maka Integrated Technology Limited logo"
-          className="h-16 w-auto object-contain opacity-95 sm:h-20"
+          className="h-24 w-auto object-contain opacity-95 sm:h-32"
         />
 
         {/* Badge */}
@@ -38,7 +38,7 @@ export default function HeroSection() {
           <h1 className="font-display text-5xl leading-[1.1] font-bold text-white sm:text-6xl lg:text-7xl">
             Building the Future
           </h1>
-          <h1 className="font-display text-5xl leading-[1.1] font-bold text-primary sm:text-6xl lg:text-7xl">
+          <h1 className="font-display text-primary text-5xl leading-[1.1] font-bold sm:text-6xl lg:text-7xl">
             of Technology
           </h1>
         </div>
@@ -62,7 +62,7 @@ export default function HeroSection() {
           <Button
             asChild
             size="lg"
-            className="rounded-full bg-primary px-8 text-white hover:bg-primary/90"
+            className="bg-primary hover:bg-primary/90 rounded-full px-8 text-white"
           >
             <a href="#services">
               Explore Services
