@@ -54,8 +54,8 @@ export default function CTASection() {
           {/* Hero CTA panel */}
           <div className="bg-brand-dark-lighter relative overflow-hidden rounded-3xl border border-white/10 px-8 py-16 text-center sm:px-16">
             <div className="pointer-events-none absolute inset-0" aria-hidden>
-              <div className="absolute top-0 left-1/4 h-80 w-80 rounded-full bg-primary/20 blur-3xl" />
-              <div className="absolute right-1/4 bottom-0 h-80 w-80 rounded-full bg-primary/15 blur-3xl" />
+              <div className="bg-primary/20 absolute top-0 left-1/4 h-80 w-80 rounded-full blur-3xl" />
+              <div className="bg-primary/15 absolute right-1/4 bottom-0 h-80 w-80 rounded-full blur-3xl" />
             </div>
 
             <div className="relative flex flex-col items-center gap-7">
@@ -80,7 +80,7 @@ export default function CTASection() {
                 <Button
                   asChild
                   size="lg"
-                  className="rounded-full bg-primary px-8 text-white hover:bg-primary/90"
+                  className="bg-primary hover:bg-primary/90 rounded-full px-8 text-white"
                 >
                   <a href="#services">
                     Explore Services
@@ -105,7 +105,7 @@ export default function CTASection() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 bg-brand-dark pb-8 pt-14">
+      <footer className="bg-brand-dark border-t border-white/10 pt-14 pb-8">
         <div className="max-w-content mx-auto px-4 sm:px-6">
           <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
             {/* Brand col */}
@@ -128,7 +128,7 @@ export default function CTASection() {
                     key={link.label}
                     href={link.href}
                     aria-label={link.label}
-                    className="flex size-8 items-center justify-center rounded-lg bg-white/8 text-white/50 transition-colors hover:bg-primary/20 hover:text-primary"
+                    className="hover:bg-primary/20 hover:text-primary flex size-8 items-center justify-center rounded-lg bg-white/8 text-white/50 transition-colors"
                   >
                     <link.icon className="size-3.5" strokeWidth={1.5} />
                   </a>
@@ -146,7 +146,7 @@ export default function CTASection() {
                   <a
                     key={link.href}
                     href={link.href}
-                    className="text-sm text-white/55 transition-colors hover:text-primary"
+                    className="hover:text-primary text-sm text-white/55 transition-colors"
                   >
                     {link.label}
                   </a>
@@ -161,7 +161,7 @@ export default function CTASection() {
               </h4>
               <a
                 href="mailto:info@makatech.com"
-                className="flex items-center gap-2 text-sm text-white/55 transition-colors hover:text-primary"
+                className="hover:text-primary flex items-center gap-2 text-sm text-white/55 transition-colors"
               >
                 <Mail className="size-4 shrink-0" strokeWidth={1.5} />
                 info@makatech.com
