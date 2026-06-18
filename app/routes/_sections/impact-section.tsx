@@ -11,7 +11,7 @@ export default function ImpactSection() {
   return (
     <section id="impact" className="bg-background py-24 sm:py-28">
       <div className="max-w-content mx-auto px-4 sm:px-6">
-        <div className="grid gap-14 lg:grid-cols-2 lg:gap-20 lg:items-center">
+        <div className="grid gap-14 lg:grid-cols-2 lg:items-center lg:gap-20">
           {/* Left: text */}
           <div className="flex flex-col gap-7">
             <div>
@@ -28,16 +28,16 @@ export default function ImpactSection() {
               Maka Integrated Technology Limited is committed to bridging the
               technology skills gap by providing accessible learning
               opportunities, mentorship programs, internships, and practical
-              industry experience that prepare individuals for successful careers
-              in technology.
+              industry experience that prepare individuals for successful
+              careers in technology.
             </p>
 
             <p className="text-muted-foreground text-base leading-relaxed">
-              We are passionate about creating opportunities, driving innovation,
-              and empowering communities through technology. Our mission extends
-              beyond solving today&apos;s challenges — we are building the
-              technologies, products, and talent that will shape the future of
-              industries, communities, and economies worldwide.
+              We are passionate about creating opportunities, driving
+              innovation, and empowering communities through technology. Our
+              mission extends beyond solving today&apos;s challenges — we are
+              building the technologies, products, and talent that will shape
+              the future of industries, communities, and economies worldwide.
             </p>
           </div>
 

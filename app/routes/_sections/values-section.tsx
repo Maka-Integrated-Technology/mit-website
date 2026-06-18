@@ -85,10 +85,7 @@ export default function ValuesSection() {
               className="bg-card border-border group flex flex-col gap-5 rounded-3xl border p-7 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
             >
               <div className="from-primary/15 to-primary/5 group-hover:from-primary/20 group-hover:to-primary/8 flex size-12 items-center justify-center rounded-2xl bg-gradient-to-br transition-colors">
-                <value.icon
-                  className="text-primary size-5"
-                  strokeWidth={1.5}
-                />
+                <value.icon className="text-primary size-5" strokeWidth={1.5} />
               </div>
               <div>
                 <h3 className="text-foreground mb-2 font-semibold">

@@ -21,8 +21,8 @@ export default function MissionVisionSection() {
         <div className="grid gap-6 md:grid-cols-2">
           {/* Mission */}
           <div className="bg-brand-dark relative overflow-hidden rounded-3xl p-10">
-            <div className="pointer-events-none absolute top-0 right-0 h-72 w-72 translate-x-1/3 -translate-y-1/3 rounded-full bg-primary/25 blur-3xl" />
-            <div className="pointer-events-none absolute bottom-0 left-0 h-48 w-48 -translate-x-1/3 translate-y-1/3 rounded-full bg-primary/15 blur-2xl" />
+            <div className="bg-primary/25 pointer-events-none absolute top-0 right-0 h-72 w-72 translate-x-1/3 -translate-y-1/3 rounded-full blur-3xl" />
+            <div className="bg-primary/15 pointer-events-none absolute bottom-0 left-0 h-48 w-48 -translate-x-1/3 translate-y-1/3 rounded-full blur-2xl" />
 
             <div className="relative flex flex-col gap-6">
               <div className="flex size-14 items-center justify-center rounded-2xl bg-white/15">
@@ -47,7 +47,7 @@ export default function MissionVisionSection() {
 
           {/* Vision */}
           <div className="bg-card border-border relative overflow-hidden rounded-3xl border p-10 shadow-sm">
-            <div className="pointer-events-none absolute top-0 right-0 h-72 w-72 translate-x-1/3 -translate-y-1/3 rounded-full bg-primary/6 blur-3xl" />
+            <div className="bg-primary/6 pointer-events-none absolute top-0 right-0 h-72 w-72 translate-x-1/3 -translate-y-1/3 rounded-full blur-3xl" />
 
             <div className="relative flex flex-col gap-6">
               <div className="bg-primary/10 flex size-14 items-center justify-center rounded-2xl">

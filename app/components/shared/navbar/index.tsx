@@ -46,11 +46,7 @@ export default function MainNavbar() {
             {!isMobile && (
               <>
                 <NavbarThemeToggle />
-                <Button
-                  asChild
-                  size="sm"
-                  className="rounded-full px-5"
-                >
+                <Button asChild size="sm" className="rounded-full px-5">
                   <a href="#contact">Get Started</a>
                 </Button>
               </>
@@ -85,7 +81,7 @@ export default function MainNavbar() {
                   {link.label}
                 </a>
               ))}
-              <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
+              <div className="border-border mt-3 flex items-center justify-between border-t pt-3">
                 <NavbarThemeToggle />
                 <Button asChild size="sm" className="rounded-full px-5">
                   <a href="#contact" onClick={() => setMobileOpen(false)}>
