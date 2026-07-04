@@ -46,7 +46,7 @@ export default function MissionVisionSection() {
           </div>
 
           {/* Vision */}
-          <div className="bg-card border-border relative overflow-hidden rounded-3xl border p-10 shadow-sm">
+          <div className="bg-card border-border relative overflow-hidden rounded-3xl border p-10">
             <div className="bg-primary/6 pointer-events-none absolute top-0 right-0 h-72 w-72 translate-x-1/3 -translate-y-1/3 rounded-full blur-3xl" />
 
             <div className="relative flex flex-col gap-6">

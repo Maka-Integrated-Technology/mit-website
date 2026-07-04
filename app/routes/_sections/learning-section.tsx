@@ -1,159 +1,73 @@
-import {
-  Briefcase,
-  GraduationCap,
-  Heart,
-  Users,
-  TrendingUp,
-  Building2,
-  Star,
-  Award,
-  BookOpen,
-} from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { ArrowRight, BookOpen, Briefcase, Users } from "lucide-react";
+import { Link } from "react-router";
+import Reveal from "../_components/reveal";
+import { Button } from "~/components/ui/button";
 
-type TalentProgram = {
-  icon: LucideIcon;
-  title: string;
-  description: string;
-};
-
-const LEARNING_AREAS = [
-  "Product Management",
-  "Project Management",
-  "Software Development",
-  "UI/UX Design",
-  "Data Analytics",
-  "Cybersecurity",
-  "Artificial Intelligence",
-  "Digital Marketing",
-  "Business Analysis",
-  "Technology Entrepreneurship",
-  "Mobile Development",
-  "Virtual Assistance",
-  "Frontend Development",
-  "Backend Development",
-  "Video Editing",
-  "Social Media",
-];
-
-const TALENT_PROGRAMS: TalentProgram[] = [
+const LEARNING_PREVIEW = [
   {
-    icon: Briefcase,
-    title: "Internship Programs",
-    description: "Hands-on industry experience",
-  },
-  {
-    icon: GraduationCap,
-    title: "Graduate Trainee Programs",
-    description: "Structured career entry pathways",
-  },
-  {
-    icon: Heart,
-    title: "Volunteer Opportunities",
-    description: "Give back while you grow",
+    icon: BookOpen,
+    label: "Skill tracks",
+    text: "Structured learning paths across technology disciplines.",
   },
   {
     icon: Users,
-    title: "Tech Mentorship Programs",
-    description: "Guidance from industry experts",
+    label: "Mentorship",
+    text: "Guidance from people who understand practical delivery.",
   },
   {
-    icon: TrendingUp,
-    title: "Career Development Programs",
-    description: "Accelerate your professional growth",
-  },
-  {
-    icon: Building2,
-    title: "Industry Experience Programs",
-    description: "Real-world project exposure",
-  },
-  {
-    icon: Star,
-    title: "Professional Coaching",
-    description: "One-on-one performance coaching",
-  },
-  {
-    icon: Award,
-    title: "Leadership Development",
-    description: "Building tomorrow's tech leaders",
+    icon: Briefcase,
+    label: "Industry exposure",
+    text: "Project experience that makes learning easier to apply.",
   },
 ];
 
 export default function LearningSection() {
   return (
-    <section id="learning" className="bg-brand-dark py-24 sm:py-28">
-      <div className="max-w-content mx-auto px-4 sm:px-6">
-        {/* Header */}
-        <div className="mb-14 text-center">
-          <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/8 px-5 py-1.5 text-xs text-white/70">
-            <BookOpen className="size-3.5" />
-            Grow With Us
-          </span>
-          <h2 className="font-display text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
-            Maka Learning Platform
-          </h2>
-          <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-white/65">
-            Our technology education and talent development initiative
-            empowering individuals with in-demand digital skills through
-            learning, mentorship, practical projects, career guidance, and
-            industry exposure.
-          </p>
-        </div>
-
-        {/* Training areas */}
-        <div className="bg-brand-dark-lighter mb-16 overflow-hidden rounded-3xl border border-white/10 p-8">
-          <div className="mb-6 flex items-center gap-3">
-            <div className="flex size-9 items-center justify-center rounded-xl bg-white/10">
-              <BookOpen className="size-4 text-white/70" strokeWidth={1.5} />
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-white">Training Areas</p>
-              <p className="text-xs text-white/45">
-                {LEARNING_AREAS.length} in-demand technology disciplines
-              </p>
-            </div>
+    <section className="bg-background px-4 py-24 sm:px-6 sm:py-28">
+      <div className="max-w-content mx-auto">
+        <Reveal className="border-border bg-muted/35 grid gap-10 rounded-[2rem] border p-6 sm:p-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
+          <div>
+            <span className="border-primary/20 bg-background text-primary mb-5 inline-flex rounded-full border px-4 py-1.5 text-xs font-semibold">
+              Maka Learning Platform
+            </span>
+            <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">
+              Learning that feels like preparation, not decoration.
+            </h2>
+            <p className="text-muted-foreground mt-5 text-lg leading-relaxed">
+              Training, mentorship, practical projects, and career development
+              programs sit behind the curtain. The full program map lives on its
+              own page.
+            </p>
+            <Button asChild className="mt-7 rounded-full px-6">
+              <Link to="/learning">
+                Explore Learning
+                <ArrowRight className="size-4" />
+              </Link>
+            </Button>
           </div>
-          <div className="flex flex-wrap gap-2.5">
-            {LEARNING_AREAS.map((area) => (
-              <span
-                key={area}
-                className="hover:border-primary/50 hover:bg-primary/15 rounded-full border border-white/15 bg-white/8 px-4 py-1.5 text-sm text-white/80 transition-colors hover:text-white"
-              >
-                {area}
-              </span>
-            ))}
-          </div>
-        </div>
 
-        {/* Talent programs */}
-        <div>
-          <p className="mb-8 text-center text-sm font-semibold tracking-wider text-white/50 uppercase">
-            Internship, Mentorship &amp; Talent Development
-          </p>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {TALENT_PROGRAMS.map((program) => (
+          <div className="grid gap-3">
+            {LEARNING_PREVIEW.map((item, index) => (
               <div
-                key={program.title}
-                className="group flex flex-col gap-3.5 rounded-3xl border border-white/10 bg-white/5 p-6 transition-all duration-200 hover:border-white/20 hover:bg-white/8"
+                key={item.label}
+                className="bg-background border-border grid gap-4 rounded-2xl border p-5 sm:grid-cols-[auto_1fr_auto] sm:items-center"
               >
-                <div className="group-hover:bg-primary/20 flex size-10 items-center justify-center rounded-xl bg-white/10 transition-colors">
-                  <program.icon
-                    className="group-hover:text-primary size-5 text-white/70 transition-colors"
-                    strokeWidth={1.5}
-                  />
+                <div className="bg-primary/10 flex size-11 items-center justify-center rounded-xl">
+                  <item.icon className="text-primary size-5" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-white">
-                    {program.title}
-                  </p>
-                  <p className="mt-1 text-xs text-white/50">
-                    {program.description}
+                  <h3 className="font-bold">{item.label}</h3>
+                  <p className="text-muted-foreground mt-1 text-sm">
+                    {item.text}
                   </p>
                 </div>
+                <span className="text-primary text-xs font-bold">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
               </div>
             ))}
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );

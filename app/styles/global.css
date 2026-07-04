@@ -175,3 +175,51 @@
     @apply cursor-pointer;
   }
 }
+
+@keyframes float-panel {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes hero-logo-in {
+  0% {
+    opacity: 0;
+    transform: translateY(18px) scale(0.94);
+  }
+  100% {
+    opacity: 0.95;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes orbit-spin {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@layer utilities {
+  .animate-float {
+    animation: float-panel 5s ease-in-out infinite;
+  }
+
+  .hero-logo {
+    animation: hero-logo-in 900ms ease-out both;
+  }
+
+  .hero-orbit {
+    animation: orbit-spin 26s linear infinite;
+  }
+
+  .hero-orbit-reverse {
+    animation: orbit-spin 38s linear infinite reverse;
+  }
+}
