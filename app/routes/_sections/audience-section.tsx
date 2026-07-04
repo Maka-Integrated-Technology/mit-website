@@ -56,7 +56,7 @@ export default function AudienceSection() {
           {AUDIENCES.map((audience) => (
             <div
               key={audience.label}
-              className="bg-card border-border group flex items-center gap-3.5 rounded-2xl border p-5 transition-all duration-200 hover:shadow-sm"
+              className="bg-card border-border group flex items-center gap-3.5 rounded-2xl border p-5 transition-all duration-200"
             >
               <div className="bg-primary/10 group-hover:bg-primary/15 flex size-10 shrink-0 items-center justify-center rounded-xl transition-colors">
                 <audience.icon
