@@ -23,7 +23,7 @@ const FOOTER_NAV = [
 ];
 
 const SOCIAL_LINKS = [
-  { icon: Globe, label: "LinkedIn", href: "#" },
+  { icon: Globe, label: "LinkedIn", href: "https://linkedin.com/company/makatech" },
   { icon: Hash, label: "X (Twitter)", href: "#" },
   { icon: Play, label: "YouTube", href: "#" },
   { icon: Mail, label: "Email", href: "mailto:info@makatech.com" },
