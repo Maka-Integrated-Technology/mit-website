@@ -14,7 +14,7 @@ import Reveal from "../_components/reveal";
 import { Button } from "~/components/ui/button";
 
 const SOCIAL_LINKS = [
-  { icon: Globe, label: "LinkedIn", href: "#" },
+  { icon: Globe, label: "LinkedIn", href: "https://linkedin.com/company/makatech" },
   { icon: Hash, label: "X (Twitter)", href: "#" },
   { icon: Play, label: "YouTube", href: "#" },
   { icon: Mail, label: "Email", href: `mailto:${CONTACT_EMAIL}` },
