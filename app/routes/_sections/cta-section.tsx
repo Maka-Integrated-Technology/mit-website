@@ -14,7 +14,11 @@ import Reveal from "../_components/reveal";
 import { Button } from "~/components/ui/button";
 
 const SOCIAL_LINKS = [
-  { icon: Globe, label: "LinkedIn", href: "https://linkedin.com/company/makatech" },
+  {
+    icon: Globe,
+    label: "LinkedIn",
+    href: "https://linkedin.com/company/makatech",
+  },
   { icon: Hash, label: "X (Twitter)", href: "#" },
   { icon: Play, label: "YouTube", href: "#" },
   { icon: Mail, label: "Email", href: `mailto:${CONTACT_EMAIL}` },
@@ -106,10 +110,10 @@ export default function CTASection() {
         </Reveal>
       </section>
 
-      <footer className="bg-background border-t border-border px-4 pt-16 pb-8 sm:px-6">
+      <footer className="bg-background border-border border-t px-4 pt-16 pb-8 sm:px-6">
         <div className="max-w-content mx-auto">
           <div className="border-primary/15 bg-muted/35 relative overflow-hidden rounded-[2rem] border p-6 sm:p-8 lg:p-10">
-            <div className="pointer-events-none absolute top-0 right-0 h-72 w-72 translate-x-1/3 -translate-y-1/3 rounded-full bg-primary/10 blur-3xl" />
+            <div className="bg-primary/10 pointer-events-none absolute top-0 right-0 h-72 w-72 translate-x-1/3 -translate-y-1/3 rounded-full blur-3xl" />
             <div className="relative grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
               <div>
                 <div className="mb-6 flex items-center gap-2.5">
@@ -185,7 +189,7 @@ export default function CTASection() {
                         key={link.label}
                         href={link.href}
                         aria-label={link.label}
-                        className="border-border hover:border-primary/30 hover:text-primary flex size-9 items-center justify-center rounded-xl border bg-muted/35 text-muted-foreground transition-colors"
+                        className="border-border hover:border-primary/30 hover:text-primary bg-muted/35 text-muted-foreground flex size-9 items-center justify-center rounded-xl border transition-colors"
                       >
                         <link.icon className="size-3.5" strokeWidth={1.5} />
                       </a>
@@ -196,7 +200,7 @@ export default function CTASection() {
             </div>
           </div>
 
-          <div className="text-muted-foreground mt-8 flex flex-col items-center justify-between gap-3 border-t border-border pt-6 text-xs sm:flex-row">
+          <div className="text-muted-foreground border-border mt-8 flex flex-col items-center justify-between gap-3 border-t pt-6 text-xs sm:flex-row">
             <p>
               &copy; {new Date().getFullYear()} Maka Integrated Technology
               Limited. All rights reserved.
