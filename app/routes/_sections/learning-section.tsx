@@ -1,131 +1,73 @@
-import {
-  Briefcase,
-  GraduationCap,
-  Heart,
-  Users,
-  TrendingUp,
-  Building2,
-  Star,
-  Award,
-  BookOpen,
-} from "lucide-react";
-import { Badge } from "~/components/ui/badge";
-import { Card, CardContent } from "~/components/ui/card";
-import type { LucideIcon } from "lucide-react";
+import { ArrowRight, BookOpen, Briefcase, Users } from "lucide-react";
+import { Link } from "react-router";
+import Reveal from "../_components/reveal";
+import { Button } from "~/components/ui/button";
 
-type TalentProgram = {
-  icon: LucideIcon;
-  title: string;
-};
-
-const LEARNING_AREAS = [
-  "Product Management",
-  "Project Management",
-  "Software Development",
-  "UI/UX Design",
-  "Data Analytics",
-  "Cybersecurity",
-  "Artificial Intelligence",
-  "Digital Marketing",
-  "Business Analysis",
-  "Technology Entrepreneurship",
-  "Mobile Development",
-  "Virtual Assistance",
-  "Frontend Development",
-  "Backend Development",
-  "Video Editing",
-  "Social Media",
-];
-
-const TALENT_PROGRAMS: TalentProgram[] = [
-  { icon: Briefcase, title: "Internship Programs" },
-  { icon: GraduationCap, title: "Graduate Trainee Programs" },
-  { icon: Heart, title: "Volunteer Opportunities" },
-  { icon: Users, title: "Tech Mentorship Programs" },
-  { icon: TrendingUp, title: "Career Development Programs" },
-  { icon: Building2, title: "Industry Experience Programs" },
-  { icon: Star, title: "Professional Coaching" },
-  { icon: Award, title: "Leadership Development Programs" },
+const LEARNING_PREVIEW = [
+  {
+    icon: BookOpen,
+    label: "Skill tracks",
+    text: "Structured learning paths across technology disciplines.",
+  },
+  {
+    icon: Users,
+    label: "Mentorship",
+    text: "Guidance from people who understand practical delivery.",
+  },
+  {
+    icon: Briefcase,
+    label: "Industry exposure",
+    text: "Project experience that makes learning easier to apply.",
+  },
 ];
 
 export default function LearningSection() {
   return (
-    <section id="learning" className="py-20 sm:py-24">
-      <div className="max-w-content mx-auto px-4 sm:px-6">
-        <div className="mb-12 text-center">
-          <Badge variant="outline" className="mb-4">
-            Grow With Us
-          </Badge>
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            Maka <span className="text-primary">Learning Platform</span>
-          </h2>
-          <p className="text-muted-foreground mx-auto mt-4 max-w-xl">
-            Our technology education and talent development initiative created
-            to empower individuals with in-demand digital skills through
-            learning, mentorship, practical projects, career guidance, and
-            industry exposure.
-          </p>
-        </div>
-
-        <div className="mb-16">
-          <div className="bg-card border-border overflow-hidden rounded-2xl border">
-            <div className="border-border flex items-center gap-3 border-b px-6 py-4">
-              <div className="bg-primary/10 flex size-9 items-center justify-center rounded-lg">
-                <BookOpen className="text-primary size-4" strokeWidth={1.5} />
-              </div>
-              <div>
-                <h3 className="text-foreground font-semibold">
-                  Training Areas
-                </h3>
-                <p className="text-muted-foreground text-xs">
-                  {LEARNING_AREAS.length} in-demand technology disciplines
-                </p>
-              </div>
-            </div>
-            <div className="flex flex-wrap gap-2.5 p-6">
-              {LEARNING_AREAS.map((area) => (
-                <span
-                  key={area}
-                  className="bg-primary/10 text-primary rounded-full px-4 py-1.5 text-sm font-medium"
-                >
-                  {area}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <div className="mb-6 text-center">
-            <h3 className="text-foreground text-xl font-bold">
-              Internship, Mentorship &amp; Talent Development
-            </h3>
-            <p className="text-muted-foreground mx-auto mt-2 max-w-xl text-sm">
-              At Maka, we believe that technology growth begins with people. Our
-              talent development initiatives help aspiring professionals gain
-              practical experience, develop industry-relevant skills, and build
-              successful careers in technology.
+    <section className="bg-background px-4 py-24 sm:px-6 sm:py-28">
+      <div className="max-w-content mx-auto">
+        <Reveal className="border-border bg-muted/35 grid gap-10 rounded-[2rem] border p-6 sm:p-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
+          <div>
+            <span className="border-primary/20 bg-background text-primary mb-5 inline-flex rounded-full border px-4 py-1.5 text-xs font-semibold">
+              Maka Learning Platform
+            </span>
+            <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">
+              Learning that feels like preparation, not decoration.
+            </h2>
+            <p className="text-muted-foreground mt-5 text-lg leading-relaxed">
+              Training, mentorship, practical projects, and career development
+              programs sit behind the curtain. The full program map lives on its
+              own page.
             </p>
+            <Button asChild className="mt-7 rounded-full px-6">
+              <Link to="/learning">
+                Explore Learning
+                <ArrowRight className="size-4" />
+              </Link>
+            </Button>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {TALENT_PROGRAMS.map((program) => (
-              <Card key={program.title} className="text-center">
-                <CardContent className="flex flex-col items-center gap-3 p-5">
-                  <div className="bg-primary/10 flex size-10 items-center justify-center rounded-xl">
-                    <program.icon
-                      className="text-primary size-5"
-                      strokeWidth={1.5}
-                    />
-                  </div>
-                  <p className="text-foreground text-sm leading-tight font-medium">
-                    {program.title}
+          <div className="grid gap-3">
+            {LEARNING_PREVIEW.map((item, index) => (
+              <div
+                key={item.label}
+                className="bg-background border-border grid gap-4 rounded-2xl border p-5 sm:grid-cols-[auto_1fr_auto] sm:items-center"
+              >
+                <div className="bg-primary/10 flex size-11 items-center justify-center rounded-xl">
+                  <item.icon className="text-primary size-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold">{item.label}</h3>
+                  <p className="text-muted-foreground mt-1 text-sm">
+                    {item.text}
                   </p>
-                </CardContent>
-              </Card>
+                </div>
+                <span className="text-primary text-xs font-bold">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+              </div>
             ))}
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );

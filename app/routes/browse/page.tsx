@@ -125,7 +125,7 @@ export default function BrowsePage() {
           filtered.map((item) => (
             <Card
               key={item.id}
-              className={cn("transition-shadow hover:shadow-md")}
+              className={cn("transition-shadow")}
             >
               <CardHeader>
                 <div className="flex items-start justify-between gap-2">
