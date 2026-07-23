@@ -21,12 +21,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="color-scheme" content="dark light" />
+        <meta name="color-scheme" content="light" />
         <title>Maka Integrated Technology Limited</title>
         <meta
           name="description"
           content="Maka Integrated Technology Limited — a global technology, innovation, and product development company delivering transformative digital solutions, technology education, and talent development worldwide."
         />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <meta property="og:image" content="/og-logo.png" />
+        <meta property="og:title" content="Maka Integrated Technology Limited" />
+        <meta property="og:type" content="website" />
         <Meta />
         <Links />
       </head>

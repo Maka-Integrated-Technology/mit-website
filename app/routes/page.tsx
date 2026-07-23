@@ -1,7 +1,5 @@
 import HeroSection from "./_sections/hero-section";
 import AboutSection from "./_sections/about-section";
-import MissionVisionSection from "./_sections/mission-vision-section";
-import ValuesSection from "./_sections/values-section";
 import ServicesSection from "./_sections/services-section";
 import ProductsSection from "./_sections/products-section";
 import LearningSection from "./_sections/learning-section";
@@ -13,8 +11,6 @@ export default function HomePage() {
     <div className="flex flex-col">
       <HeroSection />
       <AboutSection />
-      <MissionVisionSection />
-      <ValuesSection />
       <ServicesSection />
       <ProductsSection />
       <LearningSection />

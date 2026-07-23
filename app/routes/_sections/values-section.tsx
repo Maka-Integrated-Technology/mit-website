@@ -8,7 +8,6 @@ import {
   Zap,
 } from "lucide-react";
 import { Badge } from "~/components/ui/badge";
-import { Card, CardContent } from "~/components/ui/card";
 import type { LucideIcon } from "lucide-react";
 
 type Value = {
@@ -22,86 +21,81 @@ const VALUES: Value[] = [
     icon: Lightbulb,
     title: "Innovation",
     description:
-      "We embrace creativity and technology to develop solutions that create real value.",
+      "We embrace creativity and emerging technology to develop solutions that create real, lasting value.",
   },
   {
     icon: Award,
     title: "Excellence",
     description:
-      "We are committed to delivering high-quality services and products in everything we do.",
+      "We are committed to delivering high-quality services and products across everything we do.",
   },
   {
     icon: Shield,
     title: "Integrity",
     description:
-      "We conduct our business with honesty, transparency, and professionalism.",
+      "We conduct our business with honesty, transparency, and unwavering professionalism.",
   },
   {
     icon: Users,
     title: "Collaboration",
     description:
-      "We believe in teamwork, partnerships, and shared success across all we do.",
+      "We believe in the power of teamwork, partnerships, and shared success to achieve more.",
   },
   {
     icon: BookOpen,
     title: "Continuous Learning",
     description:
-      "We foster growth, development, and lifelong learning within our team and community.",
+      "We foster a culture of growth, development, and lifelong learning within our team.",
   },
   {
     icon: Target,
     title: "Customer Success",
     description:
-      "Our clients' success is at the center of every decision and solution we create.",
+      "Our clients' success is at the center of every decision, strategy, and solution we create.",
   },
   {
     icon: Zap,
     title: "Impact",
     description:
-      "We build solutions that positively transform lives, businesses, and communities.",
+      "We build solutions that positively transform lives, businesses, and communities worldwide.",
   },
 ];
 
 export default function ValuesSection() {
   return (
-    <section className="bg-muted/40 py-20 sm:py-24">
+    <section className="bg-background py-24 sm:py-28">
       <div className="max-w-content mx-auto px-4 sm:px-6">
-        <div className="mb-12 text-center">
-          <Badge variant="outline" className="mb-4">
+        <div className="mb-14 text-center">
+          <Badge variant="outline" className="mb-5 rounded-full px-4">
             What We Stand For
           </Badge>
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+          <h2 className="text-foreground text-3xl font-bold tracking-tight sm:text-4xl">
             Our Core <span className="text-primary">Values</span>
           </h2>
-          <p className="text-muted-foreground mx-auto mt-4 max-w-xl">
+          <p className="text-muted-foreground mx-auto mt-4 max-w-xl text-base">
             The principles that define our culture and guide how we work with
-            our clients, partners, and communities.
+            clients, partners, and communities around the world.
           </p>
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {VALUES.map((value) => (
-            <Card
+            <div
               key={value.title}
-              className="group transition-shadow hover:shadow-md"
+              className="bg-card border-border group flex flex-col gap-5 rounded-3xl border p-7 transition-all duration-300 hover:-translate-y-1"
             >
-              <CardContent className="flex flex-col gap-4 p-6">
-                <div className="bg-primary/10 group-hover:bg-primary/15 flex size-10 items-center justify-center rounded-xl transition-colors">
-                  <value.icon
-                    className="text-primary size-5"
-                    strokeWidth={1.5}
-                  />
-                </div>
-                <div>
-                  <h3 className="text-foreground mb-1.5 font-semibold">
-                    {value.title}
-                  </h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
-                    {value.description}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+              <div className="from-primary/15 to-primary/5 group-hover:from-primary/20 group-hover:to-primary/8 flex size-12 items-center justify-center rounded-2xl bg-gradient-to-br transition-colors">
+                <value.icon className="text-primary size-5" strokeWidth={1.5} />
+              </div>
+              <div>
+                <h3 className="text-foreground mb-2 font-semibold">
+                  {value.title}
+                </h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  {value.description}
+                </p>
+              </div>
+            </div>
           ))}
         </div>
       </div>

@@ -30,7 +30,7 @@ function LogoContent({
   return (
     <div className="flex items-center gap-2">
       <img
-        src="/maka-logo.png"
+        src="/maka-logo-transparent.png"
         alt="Maka Integrated Technology Limited logo"
         className={cn(s.img, "object-contain")}
       />
