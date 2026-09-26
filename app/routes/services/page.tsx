@@ -42,11 +42,14 @@ export default function ServicesPage() {
 
           <Reveal delay="short">
             <div className="border-primary/15 bg-muted/35 relative overflow-hidden rounded-[2rem] border p-6 sm:p-8">
-              <div className="pointer-events-none absolute top-0 right-0 h-64 w-64 translate-x-1/3 -translate-y-1/3 rounded-full bg-primary/10 blur-3xl" />
+              <div className="bg-primary/10 pointer-events-none absolute top-0 right-0 h-64 w-64 translate-x-1/3 -translate-y-1/3 rounded-full blur-3xl" />
               <div className="relative">
                 <div className="mb-10 flex items-center justify-between">
                   <div className="bg-background flex size-14 items-center justify-center rounded-2xl border">
-                    <Workflow className="text-primary size-7" strokeWidth={1.5} />
+                    <Workflow
+                      className="text-primary size-7"
+                      strokeWidth={1.5}
+                    />
                   </div>
                   <span className="border-primary/20 text-primary rounded-full border px-3 py-1 text-xs font-semibold">
                     Engagement model
@@ -113,7 +116,7 @@ export default function ServicesPage() {
                     {service.items.map((item) => (
                       <li
                         key={item}
-                        className="border-border flex items-start gap-3 border-b p-4 last:border-b-0 sm:border-r sm:nth-even:border-r-0"
+                        className="border-border sm:nth-even:border-r-0 flex items-start gap-3 border-b p-4 last:border-b-0 sm:border-r"
                       >
                         <Check className="text-primary mt-0.5 size-4 shrink-0" />
                         <span className="text-muted-foreground text-sm">

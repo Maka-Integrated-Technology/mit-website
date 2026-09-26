@@ -42,7 +42,7 @@ export default function HeroSection() {
     <section className="bg-background relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 py-28 text-center sm:px-6 sm:py-32">
       <div className="absolute inset-0 bg-[linear-gradient(color-mix(in_oklch,var(--primary)_7%,transparent)_1px,transparent_1px),linear-gradient(90deg,color-mix(in_oklch,var(--primary)_7%,transparent)_1px,transparent_1px)] bg-[size:82px_82px]" />
       <div className="absolute inset-x-0 top-0 h-[520px] bg-[radial-gradient(circle_at_50%_0%,color-mix(in_oklch,var(--primary)_22%,transparent),transparent_62%)]" />
-      <div className="absolute inset-x-0 bottom-0 h-52 bg-gradient-to-t from-muted/70 to-transparent" />
+      <div className="from-muted/70 absolute inset-x-0 bottom-0 h-52 bg-gradient-to-t to-transparent" />
       <div className="hero-orbit border-primary/12 absolute top-1/2 left-1/2 size-[560px] -translate-x-1/2 -translate-y-1/2 rounded-full border" />
       <div className="hero-orbit-reverse border-primary/8 absolute top-1/2 left-1/2 size-[760px] -translate-x-1/2 -translate-y-1/2 rounded-full border" />
 
