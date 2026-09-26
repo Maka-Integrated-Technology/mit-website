@@ -34,7 +34,7 @@ export default function ProductsPage() {
 
           <Reveal delay="short">
             <div className="border-primary/15 bg-muted/35 relative overflow-hidden rounded-[2rem] border p-6 sm:p-8">
-              <div className="pointer-events-none absolute right-0 bottom-0 h-64 w-64 translate-x-1/3 translate-y-1/3 rounded-full bg-primary/10 blur-3xl" />
+              <div className="bg-primary/10 pointer-events-none absolute right-0 bottom-0 h-64 w-64 translate-x-1/3 translate-y-1/3 rounded-full blur-3xl" />
               <div className="relative">
                 <div className="mb-8 flex items-start justify-between gap-4">
                   <div className="bg-primary/10 flex size-16 items-center justify-center rounded-3xl">
@@ -128,7 +128,7 @@ export default function ProductsPage() {
               ].map((item) => (
                 <div
                   key={item.label}
-                  className="border-border border-b p-6 sm:border-r sm:nth-even:border-r-0"
+                  className="border-border sm:nth-even:border-r-0 border-b p-6 sm:border-r"
                 >
                   <item.icon className="text-primary mb-5 size-5" />
                   <p className="font-semibold">{item.label}</p>

@@ -123,10 +123,7 @@ export default function BrowsePage() {
           </div>
         ) : (
           filtered.map((item) => (
-            <Card
-              key={item.id}
-              className={cn("transition-shadow")}
-            >
+            <Card key={item.id} className={cn("transition-shadow")}>
               <CardHeader>
                 <div className="flex items-start justify-between gap-2">
                   <CardTitle className="text-base">{item.name}</CardTitle>
