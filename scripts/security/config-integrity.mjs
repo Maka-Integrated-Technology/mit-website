@@ -1,0 +1,121 @@
+#!/usr/bin/env node
+/**
+ * Config integrity guard for Vite/React Router projects.
+ *
+ * Keeps build-tool config files from being silently rewritten by compromised
+ * dependency lifecycle hooks or injected supply-chain payloads.
+ */
+import { createHash } from 'node:crypto';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const repoRoot = path.resolve(__dirname, '..', '..');
+const manifestPath = path.join(__dirname, 'config-hashes.json');
+
+const WATCHED_FILES = ['vite.config.ts', 'tailwind.config.js', 'tailwind.config.ts'];
+
+const SUSPICIOUS_PATTERNS = [
+  /_0x[a-f0-9]{4,6}/i,
+  /require\(_0x[a-f0-9]+\)/i,
+  /\bglobal\['!'\]/,
+  /rmcej%otb%/i,
+  /\$_1e42/i,
+  /temp_auto_push\.bat/i,
+  /temp_interactive_push\.bat/i,
+  /branch_structure\.json/i,
+];
+
+function sha256(content) {
+  return createHash('sha256').update(content).digest('hex');
+}
+
+function loadManifest() {
+  if (!existsSync(manifestPath)) return {};
+  return JSON.parse(readFileSync(manifestPath, 'utf8'));
+}
+
+function scanFile(relPath) {
+  const absPath = path.join(repoRoot, relPath);
+  if (!existsSync(absPath)) return null;
+  const content = readFileSync(absPath, 'utf8');
+  const hash = sha256(content);
+  const suspicious = SUSPICIOUS_PATTERNS.filter(pattern => pattern.test(content));
+  return { relPath, hash, suspicious, length: content.length };
+}
+
+function fail(message) {
+  console.error('\n' + '='.repeat(72));
+  console.error('SECURITY ALERT: config-integrity check failed');
+  console.error('='.repeat(72));
+  console.error(message);
+  console.error('='.repeat(72) + '\n');
+  process.exit(1);
+}
+
+function verify() {
+  const manifest = loadManifest();
+  const problems = [];
+
+  for (const relPath of WATCHED_FILES) {
+    const result = scanFile(relPath);
+    if (!result) continue;
+
+    if (result.suspicious.length > 0) {
+      problems.push(
+        `${relPath}: contains known malicious-injection signature(s): ` +
+          result.suspicious.map(p => p.toString()).join(', ') +
+          ` (${result.length} bytes)`,
+      );
+      continue;
+    }
+
+    const expected = manifest[relPath];
+    if (!expected) {
+      problems.push(
+        `${relPath}: no known-good hash recorded. Run ` +
+          `'npm run security:snapshot-configs' after reviewing this file by hand.`,
+      );
+      continue;
+    }
+
+    if (expected !== result.hash) {
+      problems.push(
+        `${relPath}: content hash changed (expected ${expected.slice(0, 12)}…, ` +
+          `got ${result.hash.slice(0, 12)}…, length ${result.length} bytes). ` +
+          `If this is an intentional edit, review it carefully, then run ` +
+          `'npm run security:snapshot-configs'.`,
+      );
+    }
+  }
+
+  if (problems.length > 0) {
+    fail(problems.map(p => `- ${p}`).join('\n'));
+  }
+
+  console.log(`config-integrity: OK (${WATCHED_FILES.length} watched paths checked)`);
+}
+
+function snapshot() {
+  const manifest = {};
+  for (const relPath of WATCHED_FILES) {
+    const result = scanFile(relPath);
+    if (!result) continue;
+    if (result.suspicious.length > 0) {
+      fail(`${relPath} matches known malicious-injection signatures. Refusing to snapshot a compromised file.`);
+    }
+    manifest[relPath] = result.hash;
+  }
+
+  writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
+  console.log(`config-integrity: snapshot written to ${path.relative(repoRoot, manifestPath)}`);
+}
+
+const mode = process.argv[2];
+if (mode === 'verify') verify();
+else if (mode === 'snapshot') snapshot();
+else {
+  console.error('Usage: node scripts/security/config-integrity.mjs <verify|snapshot>');
+  process.exit(1);
+}
