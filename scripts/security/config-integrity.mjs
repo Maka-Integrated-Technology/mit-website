@@ -20,11 +20,11 @@ const SUSPICIOUS_PATTERNS = [
   /_0x[a-f0-9]{4,6}/i,
   /require\(_0x[a-f0-9]+\)/i,
   /\bglobal\['!'\]/,
-  /rmcej%otb%/i,
-  /\$_1e42/i,
-  /temp_auto_push\.bat/i,
-  /temp_interactive_push\.bat/i,
-  /branch_structure\.json/i,
+  new RegExp(['rmcej%', 'otb%'].join(''), 'i'),
+  new RegExp(['\\$_', '1e42'].join(''), 'i'),
+  new RegExp(['temp_auto_', 'push\\.bat'].join(''), 'i'),
+  new RegExp(['temp_interactive_', 'push\\.bat'].join(''), 'i'),
+  new RegExp(['branch_', 'structure\\.json'].join(''), 'i'),
 ];
 
 function sha256(content) {
