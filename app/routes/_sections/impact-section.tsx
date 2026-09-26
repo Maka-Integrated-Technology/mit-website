@@ -35,7 +35,7 @@ export default function ImpactSection() {
                 programs, services, and communities. The landing page keeps the
                 promise visible without making users read the whole report.
               </p>
-              <div className="mt-10 h-3 overflow-hidden rounded-full bg-muted">
+              <div className="bg-muted mt-10 h-3 overflow-hidden rounded-full">
                 <div className="bg-primary h-full w-3/4 rounded-full" />
               </div>
             </div>

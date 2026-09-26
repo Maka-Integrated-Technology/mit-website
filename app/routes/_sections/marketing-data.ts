@@ -133,7 +133,8 @@ export const SERVICES: ServiceCategory[] = [
   {
     icon: Code2,
     title: "Technology Solutions",
-    summary: "Custom software, enterprise tools, automation, and cloud systems.",
+    summary:
+      "Custom software, enterprise tools, automation, and cloud systems.",
     items: [
       "Software Development",
       "Web Application Development",
@@ -148,7 +149,8 @@ export const SERVICES: ServiceCategory[] = [
   {
     icon: Wifi,
     title: "ICT & Telecommunications Services",
-    summary: "Reliable infrastructure, connectivity, communication, and support.",
+    summary:
+      "Reliable infrastructure, connectivity, communication, and support.",
     items: [
       "ICT Consulting",
       "Network Infrastructure Solutions",
@@ -189,7 +191,8 @@ export const SERVICES: ServiceCategory[] = [
   {
     icon: GraduationCap,
     title: "Training & Capacity Building",
-    summary: "Professional programs that help teams grow practical digital skills.",
+    summary:
+      "Professional programs that help teams grow practical digital skills.",
     items: [
       "Technology Training Programs",
       "Corporate ICT Training",

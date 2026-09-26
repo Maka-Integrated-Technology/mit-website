@@ -31,8 +31,8 @@ export default function AboutSection() {
               What Maka Does
             </span>
             <h2 className="max-w-2xl text-4xl font-bold tracking-tight sm:text-5xl">
-              Technology delivery, product innovation, and talent development
-              in one connected company.
+              Technology delivery, product innovation, and talent development in
+              one connected company.
             </h2>
           </div>
           <div className="border-primary/15 bg-background rounded-3xl border p-6 sm:p-8">

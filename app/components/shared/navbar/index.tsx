@@ -18,7 +18,7 @@ export default function MainNavbar() {
           <Logo size="sm" />
 
           {!isMobile && (
-            <div className="ml-8 flex items-center gap-1 rounded-full border border-border/70 bg-muted/35 p-1 lg:ml-14">
+            <div className="border-border/70 bg-muted/35 ml-8 flex items-center gap-1 rounded-full border p-1 lg:ml-14">
               {NAV_LINKS.map((link) => (
                 <NavLink
                   key={link.href}

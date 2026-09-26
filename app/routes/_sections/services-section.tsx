@@ -46,7 +46,7 @@ export default function ServicesSection() {
                   <p className="text-muted-foreground mt-3 text-sm leading-relaxed">
                     {service.summary}
                   </p>
-                  <div className="mt-5 h-1.5 rounded-full bg-background">
+                  <div className="bg-background mt-5 h-1.5 rounded-full">
                     <div className="bg-primary h-full w-2/3 rounded-full transition-all duration-500 group-hover:w-full" />
                   </div>
                 </div>

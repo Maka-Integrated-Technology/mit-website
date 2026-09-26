@@ -78,11 +78,11 @@ export default tseslint.config(
 
   // Node globals for config files
   {
-    files: ["*.config.{js,ts}", "*.config.mjs"],
+    files: ["*.config.{js,ts}", "*.config.mjs", "scripts/**/*.mjs"],
     languageOptions: {
       globals: {
         ...globals.node,
       },
     },
-  },
+  }
 );
