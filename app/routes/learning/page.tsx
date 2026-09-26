@@ -1,4 +1,10 @@
-import { ArrowRight, BookOpen, GraduationCap, Route, Users } from "lucide-react";
+import {
+  ArrowRight,
+  BookOpen,
+  GraduationCap,
+  Route,
+  Users,
+} from "lucide-react";
 import { Link } from "react-router";
 import Reveal from "../_components/reveal";
 import {
