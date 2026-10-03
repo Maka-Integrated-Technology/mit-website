@@ -12,7 +12,9 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "security:verify-configs": "node scripts/security/config-integrity.mjs verify",
-    "security:snapshot-configs": "node scripts/security/config-integrity.mjs snapshot"
+    "security:snapshot-configs": "node scripts/security/config-integrity.mjs snapshot",
+    "audit:dependencies": "node scripts/security/dependency-audit-policy.mjs",
+    "test:audit-policy": "node scripts/security/dependency-audit-policy.test.mjs"
   },
   "dependencies": {
     "@fontsource-variable/dm-sans": "^5.2.8",
