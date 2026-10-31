@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "shadcn/tailwind.css";
+@import "./shadcn-tailwind.css";
 @import "@fontsource-variable/dm-sans";
 @import "@fontsource/playfair-display/700.css";
 @import "@fontsource/playfair-display/400-italic.css";
