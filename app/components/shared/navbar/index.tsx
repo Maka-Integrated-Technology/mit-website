@@ -8,7 +8,7 @@ import { useIsMobile } from "~/hooks/use-mobile";
 import { CONTACT_HREF, NAV_LINKS } from "~/routes/_sections/marketing-data";
 
 export default function MainNavbar() {
-  const isMobile = useIsMobile(768);
+  const isMobile = useIsMobile(1024);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
