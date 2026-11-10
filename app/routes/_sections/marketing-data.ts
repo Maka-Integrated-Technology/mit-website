@@ -66,6 +66,7 @@ export const NAV_LINKS = [
   { label: "Services", href: "/services" },
   { label: "Products", href: "/products" },
   { label: "Learning", href: "/learning" },
+  { label: "Bootcamp", href: "/bootcamp" },
   { label: "Impact", href: "/impact" },
 ];
 
