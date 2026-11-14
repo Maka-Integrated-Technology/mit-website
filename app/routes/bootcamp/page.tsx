@@ -264,7 +264,7 @@ export default function BootcampPage() {
                 </li>
                 <li className="flex gap-2.5">
                   <Check className="text-primary size-4 shrink-0" />
-                  ₦70,000 tuition; payment after application review
+                  ₦70,000 tuition; payment required with your application
                 </li>
                 <li className="flex gap-2.5">
                   <Check className="text-primary size-4 shrink-0" />
