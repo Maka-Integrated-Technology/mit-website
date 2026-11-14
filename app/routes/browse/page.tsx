@@ -1,3 +1,4 @@
+import { buildMeta } from "~/lib/utils/seo";
 import { useState } from "react";
 import { Search, X } from "lucide-react";
 import { Input } from "~/components/ui/input";
@@ -20,6 +21,14 @@ const MOCK_ITEMS = Array.from({ length: 12 }, (_, i) => ({
   description: `This is a description for example item ${i + 1}. Replace with real data from your API.`,
   tag: i % 3 === 0 ? "Featured" : i % 3 === 1 ? "New" : "Popular",
 }));
+
+export function meta() {
+  return buildMeta({
+    title: "Browse | Maka Integrated Technology Limited",
+    path: "/browse",
+    noIndex: true,
+  });
+}
 
 export default function BrowsePage() {
   const [inputValue, setInputValue] = useState("");

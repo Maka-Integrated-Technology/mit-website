@@ -1,3 +1,4 @@
+import { buildMeta } from "~/lib/utils/seo";
 import { ArrowRight, Network, TrendingUp } from "lucide-react";
 import { Link } from "react-router";
 import Reveal from "../_components/reveal";
@@ -15,6 +16,15 @@ const IMPACT_PILLARS = [
   "Industry exposure",
   "Technology partnerships",
 ];
+
+export function meta() {
+  return buildMeta({
+    title: "Our Impact | Maka Integrated Technology Limited",
+    path: "/impact",
+    description:
+      "Learning opportunities, mentorship programs, internships, and industry exposure that bridge the technology skills gap and prepare people for meaningful careers.",
+  });
+}
 
 export default function ImpactPage() {
   return (

@@ -23,9 +23,10 @@ cp .env.example .env.local
 
 The template reads the following variable (client-side, prefixed with `VITE_`):
 
-| Variable            | Required | Description                                                       |
-| ------------------- | -------- | ----------------------------------------------------------------- |
-| `VITE_API_BASE_URL` | Yes      | Base URL for all API requests. Read by `app/lib/config/axios.ts`. |
+| Variable            | Required | Description                                                                                                                                                              |
+| ------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `VITE_API_BASE_URL` | Yes      | Base URL for all API requests. Read by `app/lib/config/axios.ts`.                                                                                                        |
+| `VITE_SITE_URL`     | No       | Public site origin (e.g. `https://example.com`, no trailing slash). Used by `app/lib/utils/seo.ts` for canonical and Open Graph URLs; those tags are omitted when unset. |
 
 ## Development server
 
