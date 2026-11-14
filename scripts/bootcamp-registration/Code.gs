@@ -2,7 +2,7 @@ const TRACKS = [
   "Frontend Development",
   "Backend Development",
   "Mobile Development",
-  "UI/UX Design",
+  "Product Design",
   "Data Analytics",
   "Cybersecurity",
   "Artificial Intelligence",
@@ -31,7 +31,6 @@ const HEADERS = [
   "Laptop and internet access",
   "Tuition acknowledged",
   "Application data consent",
-  "Maka Tech updates opt-in",
 ];
 
 const SPREADSHEET_ID = "1Bs96kxMjeZ1j05RF4zkyCW1kvnlcVNsg4ZNg7QMyMm4";
@@ -39,6 +38,10 @@ const SPREADSHEET_ID = "1Bs96kxMjeZ1j05RF4zkyCW1kvnlcVNsg4ZNg7QMyMm4";
 function doPost(event) {
   try {
     const parameters = event && event.parameter ? event.parameter : {};
+
+    if (parameters.action === "payment_confirmation") {
+      return sendPaymentConfirmation_(parameters);
+    }
 
     // The form includes a hidden field to catch basic automated submissions.
     if (parameters.website) return response_("ok");
@@ -57,7 +60,6 @@ function doPost(event) {
       equipment: clean_(parameters.equipment),
       tuitionAcknowledged: parameters.tuitionAcknowledged === "Yes",
       dataConsent: parameters.dataConsent === "Yes",
-      marketingOptIn: parameters.marketingOptIn === "Yes",
     };
 
     if (
@@ -117,7 +119,6 @@ function doPost(event) {
         safeCell_(applicant.equipment),
         "Yes",
         "Yes",
-        applicant.marketingOptIn ? "Yes" : "No",
       ]);
     } finally {
       lock.releaseLock();
@@ -128,6 +129,74 @@ function doPost(event) {
     console.error(error);
     return response_("error");
   }
+}
+
+function sendPaymentConfirmation_(parameters) {
+  const applicant = {
+    fullName: clean_(parameters.fullName),
+    email: clean_(parameters.email).toLowerCase(),
+    phone: clean_(parameters.phone),
+    location: clean_(parameters.location),
+    track: clean_(parameters.track),
+    currentStatus: clean_(parameters.currentStatus),
+    experience: clean_(parameters.experience),
+    motivation: clean_(parameters.motivation),
+    goal: clean_(parameters.goal),
+    availability: clean_(parameters.availability),
+    equipment: clean_(parameters.equipment),
+    tuitionAcknowledged: parameters.tuitionAcknowledged === "Yes",
+    dataConsent: parameters.dataConsent === "Yes",
+  };
+
+  if (
+    !applicant.fullName ||
+    !applicant.email ||
+    !applicant.phone ||
+    !applicant.location ||
+    !applicant.track ||
+    !applicant.motivation ||
+    !applicant.goal
+  ) {
+    return response_("missing_required_fields");
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(applicant.email)) {
+    return response_("invalid_email");
+  }
+
+  const details = [
+    "An applicant has reported paying the Maka Tech Bootcamp tuition.",
+    "Please verify the transfer before confirming the registration.",
+    "",
+    "Payment: ₦70,000 to UBA, account 1031747948",
+    "Account name: Maka Integrated Technology Limited",
+    "",
+    "Applicant submission:",
+    "Full name: " + applicant.fullName,
+    "Email: " + applicant.email,
+    "Phone / WhatsApp: " + applicant.phone,
+    "City and country: " + applicant.location,
+    "Track: " + applicant.track,
+    "Current status: " + applicant.currentStatus,
+    "Experience: " + applicant.experience,
+    "Motivation: " + applicant.motivation,
+    "Goal: " + applicant.goal,
+    "Availability: " + applicant.availability,
+    "Laptop and internet access: " + applicant.equipment,
+    "Tuition acknowledged: " + (applicant.tuitionAcknowledged ? "Yes" : "No"),
+    "Application data consent: " + (applicant.dataConsent ? "Yes" : "No"),
+    "",
+    "Payment notice received: " + new Date().toISOString(),
+  ].join("\n");
+
+  MailApp.sendEmail({
+    to: "makatechlimited@gmail.com",
+    subject: "Bootcamp payment confirmation requested — " + applicant.fullName,
+    body: details,
+    replyTo: applicant.email,
+  });
+
+  return response_("ok");
 }
 
 function clean_(value) {

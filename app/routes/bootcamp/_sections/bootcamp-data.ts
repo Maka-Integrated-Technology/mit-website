@@ -11,7 +11,7 @@ export const BOOTCAMP_TRACKS = [
   {
     title: "Design, data & quality",
     tracks: [
-      "UI/UX Design",
+      "Product Design",
       "Data Analytics",
       "Cybersecurity",
       "Artificial Intelligence",

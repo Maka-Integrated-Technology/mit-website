@@ -4,6 +4,14 @@ import * as Yup from "yup";
 import { ArrowRight, CheckCircle2, LockKeyhole } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import { BOOTCAMP_TRACKS } from "./bootcamp-data";
 
@@ -35,6 +43,7 @@ const EQUIPMENT_OPTIONS = [
 const REGISTRATION_URL = import.meta.env.VITE_BOOTCAMP_REGISTRATION_URL?.trim();
 
 type SubmissionState = "idle" | "success" | "error";
+type PaymentNoticeState = "idle" | "sent" | "error";
 
 type ApplicationValues = {
   fullName: string;
@@ -50,7 +59,6 @@ type ApplicationValues = {
   equipment: string;
   tuitionAcknowledged: boolean;
   dataConsent: boolean;
-  marketingOptIn: boolean;
   website: string;
 };
 
@@ -68,7 +76,6 @@ const INITIAL_VALUES: ApplicationValues = {
   equipment: "",
   tuitionAcknowledged: false,
   dataConsent: false,
-  marketingOptIn: false,
   website: "",
 };
 
@@ -109,7 +116,6 @@ const VALIDATION_SCHEMA: Yup.ObjectSchema<ApplicationValues> = Yup.object({
   dataConsent: Yup.boolean()
     .oneOf([true], "Consent is required to process your application")
     .defined(),
-  marketingOptIn: Yup.boolean().required(),
   website: Yup.string().max(0).defined(),
 });
 
@@ -277,13 +283,14 @@ async function submitApplication(
   values: ApplicationValues,
   actions: FormikHelpers<ApplicationValues>,
   onStateChange: (state: SubmissionState) => void
-) {
+): Promise<boolean> {
   if (!REGISTRATION_URL) {
     onStateChange("error");
-    return;
+    return false;
   }
 
   const payload = new URLSearchParams({
+    action: "register",
     fullName: values.fullName.trim(),
     email: values.email.trim(),
     phone: values.phone.trim(),
@@ -297,7 +304,6 @@ async function submitApplication(
     equipment: values.equipment,
     tuitionAcknowledged: values.tuitionAcknowledged ? "Yes" : "",
     dataConsent: values.dataConsent ? "Yes" : "",
-    marketingOptIn: values.marketingOptIn ? "Yes" : "",
     website: values.website,
   });
 
@@ -309,14 +315,64 @@ async function submitApplication(
     });
     actions.resetForm();
     onStateChange("success");
+    return true;
   } catch {
     onStateChange("error");
+    return false;
   }
+}
+
+async function notifyPaymentSubmitted(values: ApplicationValues) {
+  if (!REGISTRATION_URL) throw new Error("Registration endpoint is missing");
+
+  const payload = new URLSearchParams({
+    action: "payment_confirmation",
+    fullName: values.fullName.trim(),
+    email: values.email.trim(),
+    phone: values.phone.trim(),
+    location: values.location.trim(),
+    track: values.track,
+    currentStatus: values.currentStatus,
+    experience: values.experience,
+    motivation: values.motivation.trim(),
+    goal: values.goal.trim(),
+    availability: values.availability,
+    equipment: values.equipment,
+    tuitionAcknowledged: values.tuitionAcknowledged ? "Yes" : "No",
+    dataConsent: values.dataConsent ? "Yes" : "No",
+  });
+
+  await fetch(REGISTRATION_URL, {
+    method: "POST",
+    mode: "no-cors",
+    body: payload,
+  });
 }
 
 export default function ApplicationForm() {
   const [submissionState, setSubmissionState] =
     useState<SubmissionState>("idle");
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [paymentNoticeState, setPaymentNoticeState] =
+    useState<PaymentNoticeState>("idle");
+  const [isSendingPaymentNotice, setIsSendingPaymentNotice] = useState(false);
+  const [submittedValues, setSubmittedValues] =
+    useState<ApplicationValues | null>(null);
+
+  async function handlePaymentConfirmation() {
+    if (!submittedValues || isSendingPaymentNotice) return;
+
+    setIsSendingPaymentNotice(true);
+    try {
+      await notifyPaymentSubmitted(submittedValues);
+      setPaymentNoticeState("sent");
+      setPaymentModalOpen(false);
+    } catch {
+      setPaymentNoticeState("error");
+    } finally {
+      setIsSendingPaymentNotice(false);
+    }
+  }
 
   return (
     <div className="bg-background border-border rounded-[2rem] border p-6 shadow-sm sm:p-8 lg:p-10">
@@ -332,9 +388,28 @@ export default function ApplicationForm() {
             Thanks for applying.
           </h3>
           <p className="text-muted-foreground mt-4 max-w-lg leading-relaxed">
-            Maka Tech will review your application and contact you with the next
-            steps. Keep an eye on your email and WhatsApp.
+            Your application is saved. Pay the ₦70,000 tuition using the account
+            details, then let us know so our team can confirm your payment.
           </p>
+          {paymentNoticeState === "sent" ? (
+            <p className="text-primary mt-5 text-sm font-medium">
+              Your payment notice was submitted. Maka Tech will verify the
+              transfer and contact you by email or WhatsApp.
+            </p>
+          ) : (
+            <Button
+              className="mt-6 rounded-full px-7"
+              onClick={() => setPaymentModalOpen(true)}
+            >
+              View payment details
+            </Button>
+          )}
+          {paymentNoticeState === "error" && (
+            <FieldError>
+              We could not send the payment notice. Please try again or email
+              info@makatechlimited.com.
+            </FieldError>
+          )}
         </div>
       ) : (
         <>
@@ -352,7 +427,16 @@ export default function ApplicationForm() {
           <Formik<ApplicationValues>
             initialValues={INITIAL_VALUES}
             onSubmit={async (values, actions) => {
-              await submitApplication(values, actions, setSubmissionState);
+              const submitted = await submitApplication(
+                values,
+                actions,
+                setSubmissionState
+              );
+              if (submitted) {
+                setSubmittedValues(values);
+                setPaymentNoticeState("idle");
+                setPaymentModalOpen(true);
+              }
             }}
             validationSchema={VALIDATION_SCHEMA}
           >
@@ -447,12 +531,13 @@ export default function ApplicationForm() {
                     <p className="font-semibold">Tuition: ₦70,000</p>
                     <p className="text-muted-foreground mt-1 text-sm">
                       The bootcamp lasts three months. There are no scholarships
-                      for this cohort. Payment details will be shared after
-                      application review.
+                      for this cohort. You must pay the tuition before your
+                      registration is confirmed. Payment instructions will
+                      appear after you submit your application.
                     </p>
                   </div>
                   <CheckboxField
-                    label="I understand the ₦70,000 tuition and three-month commitment."
+                    label="I understand the ₦70,000 tuition and three-month commitment, and that I must pay before my registration is confirmed."
                     name="tuitionAcknowledged"
                     required
                   />
@@ -460,10 +545,6 @@ export default function ApplicationForm() {
                     label="I agree that Maka Tech may use these details to review and respond to my application."
                     name="dataConsent"
                     required
-                  />
-                  <CheckboxField
-                    label="Send me future Maka Tech learning and program updates."
-                    name="marketingOptIn"
                   />
                 </div>
 
@@ -511,6 +592,58 @@ export default function ApplicationForm() {
           </Formik>
         </>
       )}
+      <Dialog open={paymentModalOpen} onOpenChange={setPaymentModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Complete your bootcamp registration</DialogTitle>
+            <DialogDescription>
+              Pay the ₦70,000 tuition to the account below. Maka Tech will
+              review your application and confirm the transfer.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 px-6 py-5">
+            <div className="border-border bg-muted/40 grid gap-3 rounded-xl border p-4">
+              <div>
+                <p className="text-muted-foreground text-xs">Bank</p>
+                <p className="font-semibold">UBA</p>
+              </div>
+              <div>
+                <p className="text-muted-foreground text-xs">Account name</p>
+                <p className="font-semibold">Maka Integrated Technology Limited</p>
+              </div>
+              <div>
+                <p className="text-muted-foreground text-xs">Account number</p>
+                <p className="text-xl font-bold tracking-wide">1031747948</p>
+              </div>
+              <div>
+                <p className="text-muted-foreground text-xs">Amount</p>
+                <p className="font-semibold">₦70,000</p>
+              </div>
+            </div>
+            <p className="text-muted-foreground text-sm leading-relaxed">
+              After transferring, select “I have paid” to notify our team. Your
+              application details will be included so an administrator can
+              verify your payment.
+            </p>
+          </div>
+          <DialogFooter className="flex-col-reverse sm:flex-row">
+            <Button
+              className="rounded-full"
+              onClick={() => setPaymentModalOpen(false)}
+              variant="outline"
+            >
+              Cancel
+            </Button>
+            <Button
+              className="rounded-full"
+              isLoading={isSendingPaymentNotice}
+              onClick={handlePaymentConfirmation}
+            >
+              I have paid
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
