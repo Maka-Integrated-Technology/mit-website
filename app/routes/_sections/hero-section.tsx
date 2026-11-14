@@ -68,14 +68,10 @@ export default function HeroSection() {
           Global Technology · Innovation · Product Development
         </span>
 
-        <div className="flex flex-col items-center gap-2">
-          <h1 className="text-foreground font-display text-5xl leading-[1.1] font-bold sm:text-6xl lg:text-7xl">
-            Building the Future
-          </h1>
-          <h1 className="font-display text-primary text-5xl leading-[1.1] font-bold sm:text-6xl lg:text-7xl">
-            of Technology
-          </h1>
-        </div>
+        <h1 className="font-display flex flex-col items-center gap-2 text-5xl leading-[1.1] font-bold sm:text-6xl lg:text-7xl">
+          <span className="text-foreground">Building the Future</span>
+          <span className="text-primary">of Technology</span>
+        </h1>
 
         <p className="text-muted-foreground text-base font-medium tracking-wide sm:text-lg">
           Maka Integrated Technology Limited

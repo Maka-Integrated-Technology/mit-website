@@ -9,6 +9,7 @@ import {
   UsersRound,
 } from "lucide-react";
 import Reveal from "../_components/reveal";
+import { buildMeta, SITE_NAME } from "~/lib/utils/seo";
 import ApplicationForm from "./_sections/application-form";
 import { BOOTCAMP_TRACKS, BOOTCAMP_WEEKS } from "./_sections/bootcamp-data";
 import { Badge } from "~/components/ui/badge";
@@ -28,6 +29,31 @@ const GRADUATE_PATHS = [
   "Contribute to a client project when a suitable opportunity is available",
   "Be recommended to companies when there is a suitable fit",
 ];
+
+const BOOTCAMP_DESCRIPTION =
+  "Join the 3-month, mentor-led Maka Tech Bootcamp starting January 2027. Choose from tech, design, data and digital tracks. Tuition is ₦70,000.";
+
+export function meta() {
+  return buildMeta({
+    title: "Maka Tech Bootcamp | January 2027 Cohort",
+    path: "/bootcamp",
+    description: BOOTCAMP_DESCRIPTION,
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "Course",
+      name: "Maka Tech Bootcamp",
+      description: BOOTCAMP_DESCRIPTION,
+      provider: { "@type": "Organization", name: SITE_NAME },
+      timeRequired: "P3M",
+      offers: {
+        "@type": "Offer",
+        category: "Paid",
+        price: "70000",
+        priceCurrency: "NGN",
+      },
+    },
+  });
+}
 
 export default function BootcampPage() {
   return (

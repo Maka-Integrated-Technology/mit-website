@@ -3,7 +3,7 @@ import type { MetaDescriptor } from "react-router";
 export const SITE_NAME = "Maka Integrated Technology Limited";
 
 export const DEFAULT_DESCRIPTION =
-  "Maka Integrated Technology Limited is a global technology, innovation, and product development company delivering digital solutions, technology education, and talent development.";
+  "Maka Integrated Technology Limited is a global technology company delivering digital solutions, product development, technology education, and talent growth.";
 
 const DEFAULT_OG_IMAGE = "/og-logo.png";
 

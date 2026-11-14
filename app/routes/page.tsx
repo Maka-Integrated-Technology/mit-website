@@ -9,8 +9,7 @@ import CTASection from "./_sections/cta-section";
 
 export function meta() {
   return buildMeta({
-    title:
-      "Maka Integrated Technology Limited | Technology, Product & Talent Development",
+    title: "Maka Integrated Technology Limited | Tech, Product & Talent",
     path: "/",
     jsonLd: organizationJsonLd(),
   });

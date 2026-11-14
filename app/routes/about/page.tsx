@@ -41,7 +41,7 @@ export function meta() {
     title: "About Maka | Maka Integrated Technology Limited",
     path: "/about",
     description:
-      "Maka Integrated Technology Limited is a global technology, innovation, and product development company building practical digital solutions for businesses, institutions, and individuals.",
+      "Maka Integrated Technology Limited is a global technology and product development company building practical digital solutions for businesses and institutions.",
   });
 }
 

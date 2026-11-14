@@ -29,7 +29,7 @@ export function meta() {
     title: "Maka Learning Platform | Maka Integrated Technology Limited",
     path: "/learning",
     description:
-      "Practical learning paths combining structured learning, mentorship, hands-on projects, career guidance, and industry exposure for tomorrow's technology talent.",
+      "Practical learning paths combining structured learning, mentorship, hands-on projects, career guidance, and industry exposure for future tech talent.",
   });
 }
 
