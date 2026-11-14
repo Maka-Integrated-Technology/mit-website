@@ -609,7 +609,9 @@ export default function ApplicationForm() {
               </div>
               <div>
                 <p className="text-muted-foreground text-xs">Account name</p>
-                <p className="font-semibold">Maka Integrated Technology Limited</p>
+                <p className="font-semibold">
+                  Maka Integrated Technology Limited
+                </p>
               </div>
               <div>
                 <p className="text-muted-foreground text-xs">Account number</p>
