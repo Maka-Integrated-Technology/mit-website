@@ -12,6 +12,9 @@ FROM node:20-alpine AS build-env
 COPY . /app/
 COPY --from=development-dependencies-env /app/node_modules /app/node_modules
 WORKDIR /app
+# .dockerignore excludes .env.*, so pass the public origin explicitly.
+ARG VITE_SITE_URL=https://makatechlimited.com
+ENV VITE_SITE_URL=$VITE_SITE_URL
 RUN npm run build
 
 FROM node:20-alpine

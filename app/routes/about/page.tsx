@@ -1,3 +1,4 @@
+import { buildMeta } from "~/lib/utils/seo";
 import { ArrowRight, Compass, Network, Target, Zap } from "lucide-react";
 import { Link } from "react-router";
 import Reveal from "../_components/reveal";
@@ -34,6 +35,15 @@ const ECOSYSTEM_NODES = [
   "Technology education",
   "Talent development",
 ];
+
+export function meta() {
+  return buildMeta({
+    title: "About Maka | Maka Integrated Technology Limited",
+    path: "/about",
+    description:
+      "Maka Integrated Technology Limited is a global technology and product development company building practical digital solutions for businesses and institutions.",
+  });
+}
 
 export default function AboutPage() {
   return (

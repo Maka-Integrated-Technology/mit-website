@@ -1,3 +1,4 @@
+import { buildMeta } from "~/lib/utils/seo";
 import { ArrowRight, Check, Mail, Route, Workflow } from "lucide-react";
 import { Link } from "react-router";
 import Reveal from "../_components/reveal";
@@ -11,6 +12,15 @@ const ENGAGEMENT_STEPS = [
   "Deliver practical systems",
   "Support adoption and growth",
 ];
+
+export function meta() {
+  return buildMeta({
+    title: "Technology Services | Maka Integrated Technology Limited",
+    path: "/services",
+    description:
+      "Technology services from strategy and product delivery to infrastructure, intelligence, training, and ongoing digital transformation.",
+  });
+}
 
 export default function ServicesPage() {
   return (

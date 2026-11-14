@@ -9,8 +9,31 @@ server-side rendering and no server entry point.
 ## SPA configuration
 
 `react-router.config.ts` sets `ssr: false`. The build output is a static bundle
-under `build/client` — a single `index.html` plus hashed JS/CSS chunks. All
-routing happens in the browser.
+under `build/client` plus hashed JS/CSS chunks. All routing happens in the
+browser after hydration.
+
+The public routes listed in `prerender` in `react-router.config.ts` are rendered
+to static HTML at build time (e.g. `build/client/about/index.html`) so crawlers
+and link previews see real content and per-page tags. Add a new public route to
+that list. Components rendered during prerender must not touch `window`,
+`document` or `navigator` in render or `useState` initialisers; use
+`useEffect` or `useSyncExternalStore` with a server snapshot.
+
+After `react-router build`, `scripts/seo/postbuild.mjs` (chained in
+`npm run build`) writes `404.html` (a copy of the SPA fallback, so `serve`
+answers unknown URLs with a real 404 and the client router shows the not-found
+page), `sitemap.xml` (one entry per prerendered page) and appends the sitemap
+to `robots.txt`. The sitemap needs `VITE_SITE_URL`. `npm start` therefore runs
+`serve` without `-s`: any route that is not prerendered will 404 on a direct
+hit.
+
+## SEO metadata
+
+Each route exports `meta()` returning `buildMeta({ title, description, path })`
+from `app/lib/utils/seo.ts`. React Router renders only the deepest route's
+meta, so `buildMeta` returns the full set (description, canonical, Open Graph,
+Twitter, optional JSON-LD via `jsonLd`). Placeholder or private routes pass
+`noIndex: true`.
 
 ## Routing
 

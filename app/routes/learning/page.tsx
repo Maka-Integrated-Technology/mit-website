@@ -1,3 +1,4 @@
+import { buildMeta } from "~/lib/utils/seo";
 import {
   ArrowRight,
   BookOpen,
@@ -22,6 +23,15 @@ const JOURNEY = [
   "Mentorship",
   "Career growth",
 ];
+
+export function meta() {
+  return buildMeta({
+    title: "Maka Learning Platform | Maka Integrated Technology Limited",
+    path: "/learning",
+    description:
+      "Practical learning paths combining structured learning, mentorship, hands-on projects, career guidance, and industry exposure for future tech talent.",
+  });
+}
 
 export default function LearningPage() {
   return (

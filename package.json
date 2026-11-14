@@ -3,9 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "npm run security:verify-configs && react-router build && npm run security:verify-configs",
+    "build": "npm run security:verify-configs && react-router build && node scripts/seo/postbuild.mjs && npm run security:verify-configs",
     "dev": "react-router dev -p 5100",
-    "start": "npx serve build/client -s",
+    "start": "npx serve build/client",
     "typecheck": "react-router typegen && tsc",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

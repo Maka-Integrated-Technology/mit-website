@@ -1,3 +1,4 @@
+import { buildMeta } from "~/lib/utils/seo";
 import { ArrowRight, FlaskConical, Heart, Layers, Radar } from "lucide-react";
 import { Link } from "react-router";
 import Reveal from "../_components/reveal";
@@ -11,6 +12,15 @@ const PRODUCT_SIGNALS = [
   "Secure user journeys",
   "Global health outcomes",
 ];
+
+export function meta() {
+  return buildMeta({
+    title: "Product Development | Maka Integrated Technology Limited",
+    path: "/products",
+    description:
+      "Maka develops digital products across healthcare, education, finance, and emerging technology with a practical, research-led product process.",
+  });
+}
 
 export default function ProductsPage() {
   return (

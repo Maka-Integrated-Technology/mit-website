@@ -11,9 +11,15 @@ import { AlertCircle } from "lucide-react";
 import "~/styles/global.css";
 import TanstackQueryProvider from "./components/providers/tanstack-query";
 import { ThemeProvider } from "./components/providers/theme-provider";
+import { buildMeta, SITE_NAME } from "./lib/utils/seo";
 import { Toaster } from "./components/ui/sonner";
 import { Card, CardContent } from "./components/ui/card";
 import { TooltipProvider } from "./components/ui/tooltip";
+
+// Fallback for routes without their own meta (e.g. the error boundary).
+export function meta() {
+  return buildMeta({ title: SITE_NAME, path: "/" });
+}
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -22,11 +28,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="color-scheme" content="light" />
-        <title>Maka Integrated Technology Limited</title>
-        <meta
-          name="description"
-          content="Maka Integrated Technology Limited — a global technology, innovation, and product development company delivering transformative digital solutions, technology education, and talent development worldwide."
-        />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link
           rel="icon"
@@ -41,12 +42,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
           href="/favicon-16x16.png"
         />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <meta property="og:image" content="/og-logo.png" />
-        <meta
-          property="og:title"
-          content="Maka Integrated Technology Limited"
-        />
-        <meta property="og:type" content="website" />
         <Meta />
         <Links />
       </head>
