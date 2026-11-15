@@ -68,5 +68,7 @@ Google limits how many emails a script can send per day. When the quota is
 nearly used up, alerts are skipped and a payment notice is recorded in the sheet
 as `Email pending — <time>` instead of being emailed. The applicant's retry, or
 running `sendPendingPaymentEmails` (by hand, or from a daily time-driven trigger
-under **Triggers**), sends those emails once the quota has reset. The payment notice is an applicant's self-report only; an admin must
-verify the transfer before confirming registration.
+under **Triggers**), sends those emails once the quota has reset.
+
+The payment notice is an applicant's self-report only; an admin must verify the
+transfer before confirming registration.
