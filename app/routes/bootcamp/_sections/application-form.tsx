@@ -116,7 +116,9 @@ const VALIDATION_SCHEMA: Yup.ObjectSchema<ApplicationValues> = Yup.object({
   dataConsent: Yup.boolean()
     .oneOf([true], "Consent is required to process your application")
     .defined(),
-  website: Yup.string().max(0).defined(),
+  // Honeypot. Formik converts "" to undefined before validating, so this must
+  // not use .defined(); any non-empty value still fails max(0).
+  website: Yup.string().max(0).default(""),
 });
 
 type TextFieldProps = {
