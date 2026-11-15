@@ -13,11 +13,51 @@ does not need a separately hosted API server.
 4. Choose **Deploy → New deployment → Web app**. Set **Execute as** to your
    account and grant access to **Anyone** so applicants can submit without a
    Google login. Review the access policy for your Workspace before deploying.
-5. Deploy, authorize the script, and copy the web app URL ending in `/exec`.
-   The script needs permission to send mail through `MailApp`; approve that
-   permission when Google prompts during deployment or the first payment notice.
-6. Add the URL to the website's deployment environment as
+5. Set up email (next section) **before** deploying, so the permission prompt
+   covers everything the script needs.
+6. Deploy, authorize the script, and copy the web app URL ending in `/exec`.
+7. Add the URL to the website's deployment environment as
    `VITE_BOOTCAMP_REGISTRATION_URL`, then rebuild and publish the website.
+
+## Set up email (Resend)
+
+Payment notices and alerts are sent through [Resend](https://resend.com), not
+Google's mail service. The script calls Resend's HTTP API.
+
+1. In Resend, verify a sending domain (Dashboard → Domains). The default sender
+   in `Code.gs` is `bootcamp@contact.ohealthltd.com`; to send from a different
+   verified domain, set the optional `RESEND_FROM` property below. Resend's
+   `onboarding@resend.dev` test sender can only reach the Resend account owner's
+   own address, so it is not suitable.
+2. In Resend, create an API key (**Sending access** is enough).
+3. In Apps Script open **Project Settings → Script properties → Add script
+   property** and add:
+   - `RESEND_API_KEY` = the key (starts with `re_`)
+   - `RESEND_FROM` (optional) = e.g. `Maka Tech <bootcamp@yourdomain.com>`
+4. Select `sendTestEmail` in the editor and click **Run**. Approve the prompt to
+   **connect to an external service** (a one-time permission for the account
+   that owns the script), then check that the test email arrives at the admin
+   address. The result is also written to the execution log.
+
+If the test fails with "You do not have permission to call UrlFetchApp.fetch.
+Required permissions: …script.external_request", Google has not granted that
+permission to the project. Open **Project Settings**, turn on **Show
+"appsscript.json" manifest file in editor**, and open `appsscript.json`:
+
+- If it has an `oauthScopes` list, add
+  `"https://www.googleapis.com/auth/script.external_request"` to it. The script
+  needs exactly two scopes: that one and
+  `"https://www.googleapis.com/auth/spreadsheets"`. Save, then run
+  `sendTestEmail` again and approve the prompt.
+- If it has no `oauthScopes` list, remove the project's access at
+  <https://myaccount.google.com/permissions>, then run `sendTestEmail` again so
+  Google asks for approval afresh.
+
+After approving, deploy a **New version** so the live web app uses it.
+
+**Never put the API key in `Code.gs`, in the website, or in the repository.** It
+belongs only in Script properties. If a key is ever shared or committed, delete
+it in Resend and create a new one.
 
 The script writes to the `Applications` tab of the supplied spreadsheet. It
 creates the header row on the first valid submission only if that tab is empty.
@@ -39,8 +79,9 @@ request to Apps Script, which emails the submission details to
 
 Because the browser cannot read the cross-origin response in `no-cors` mode,
 the website can confirm that the request was dispatched, but cannot confirm
-that Google Sheets saved the row or that Google sent the email. Check both the
-Applications sheet and the admin inbox after deployment.
+that Google Sheets saved the row or that the email was sent. Check the
+Applications sheet and the admin inbox after deployment. Sent emails also
+appear in the Resend dashboard under Emails.
 
 The script validates every field on both requests (required fields, the track
 and the other dropdown options, email format, and length limits), rejects a
@@ -64,11 +105,13 @@ The browser cannot see failures, so the script emails the admin in two cases:
   or someone is posting junk. At most one of these is sent per hour; every
   rejection is also logged under **Executions** in Apps Script.
 
-Google limits how many emails a script can send per day. When the quota is
-nearly used up, alerts are skipped and a payment notice is recorded in the sheet
-as `Email pending — <time>` instead of being emailed. The applicant's retry, or
-running `sendPendingPaymentEmails` (by hand, or from a daily time-driven trigger
-under **Triggers**), sends those emails once the quota has reset.
+If an email cannot be sent (Resend is down, the key is missing or wrong, the
+domain is not verified, or Resend's daily limit is reached), the payment notice
+is still recorded in the sheet as `Email pending — <time>` instead of being
+lost. The applicant's retry, or running `sendPendingPaymentEmails` (by hand, or
+from a time-driven trigger under **Triggers**), sends those emails once sending
+works again. Every failed send is logged under **Executions** with Resend's
+status code. Resend's free plan allows 100 emails a day.
 
 The payment notice is an applicant's self-report only; an admin must verify the
 transfer before confirming registration.

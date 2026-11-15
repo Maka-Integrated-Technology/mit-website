@@ -66,16 +66,24 @@ const SPREADSHEET_ID = "1Bs96kxMjeZ1j05RF4zkyCW1kvnlcVNsg4ZNg7QMyMm4";
 const SHEET_NAME = "Applications";
 const ADMIN_EMAIL = "makatechlimited@gmail.com";
 
-// MailApp has a small daily quota. Keep some in reserve for failure alerts.
-const MIN_MAIL_QUOTA = 10;
+// Email is sent through Resend (https://resend.com). The API key is a secret, so
+// it is read from Script Properties (Project Settings → Script properties) and
+// must never be written in this file. Properties used:
+//   RESEND_API_KEY  required  the Resend API key (starts with "re_")
+//   RESEND_FROM     optional  sender, e.g. "Maka Tech <bootcamp@yourdomain.com>";
+//                             needs a domain verified in Resend
+const RESEND_ENDPOINT = "https://api.resend.com/emails";
+// Must be an address on a domain verified in Resend (contact.ohealthltd.com is
+// verified on this Resend account). Override with the RESEND_FROM property.
+const DEFAULT_FROM = "Maka Tech Bootcamp <bootcamp@contact.ohealthltd.com>";
 
 // Written to "Payment reported at" when a payment was reported but the admin
-// email could not be sent (mail quota). A retry, or sendPendingPaymentEmails(),
-// sends it later.
+// email could not be sent (Resend down, key missing, rate limit, and so on). A
+// retry, or sendPendingPaymentEmails(), sends it later.
 const EMAIL_PENDING = "Email pending — ";
 
-// At most one "submission rejected" alert per hour, so junk requests cannot use
-// up the mail quota.
+// At most one "submission rejected" alert per hour, so junk requests cannot
+// trigger a flood of emails.
 const REJECTION_ALERT_SECONDS = 3600;
 
 function doPost(event) {
@@ -193,21 +201,18 @@ function handlePaymentConfirmation_(applicant) {
     }
 
     const reportedAt = new Date().toISOString();
-    if (mailQuotaAvailable_()) {
-      sendPaymentEmail_(applicant, rowNote, reportedAt);
-      paidCell.setValue(reportedAt);
-    } else {
-      // Out of mail quota. Mark the row so the payment is visible in the sheet
-      // and can be emailed later without being lost.
-      paidCell.setValue(EMAIL_PENDING + reportedAt);
-    }
+    const sent = sendPaymentEmail_(applicant, rowNote, reportedAt);
+    // If the email failed, mark the row so the payment is still visible in the
+    // sheet and can be emailed later without being lost.
+    paidCell.setValue(sent ? reportedAt : EMAIL_PENDING + reportedAt);
 
     return response_("ok");
   });
 }
 
 // Emails the admin for every row marked "Email pending". Run it by hand, or
-// add a daily time-driven trigger, after the mail quota resets.
+// add a time-driven trigger, once email sending works again. It stops at the
+// first failure.
 function sendPendingPaymentEmails() {
   return withApplicationsSheet_(function (sheet, columns) {
     const lastRow = sheet.getLastRow();
@@ -217,11 +222,10 @@ function sendPendingPaymentEmails() {
       const paidCell = sheet.getRange(row, columns.paid);
       const value = String(paidCell.getValue() || "");
       if (value.indexOf(EMAIL_PENDING) !== 0) continue;
-      if (!mailQuotaAvailable_()) break;
 
       const v = sheet.getRange(row, 1, 1, CORE_HEADERS.length).getValues()[0];
       const reportedAt = value.slice(EMAIL_PENDING.length);
-      sendPaymentEmail_(
+      const delivered = sendPaymentEmail_(
         {
           applicationId: String(sheet.getRange(row, columns.id).getValue()),
           fullName: String(v[1]),
@@ -236,9 +240,10 @@ function sendPendingPaymentEmails() {
           availability: String(v[10]),
           equipment: String(v[11]),
         },
-        "Sent later from sheet row " + row + " (mail quota was used up).",
+        "Sent later from sheet row " + row + " (it could not be sent earlier).",
         reportedAt
       );
+      if (!delivered) break;
       paidCell.setValue(reportedAt);
       sent++;
     }
@@ -246,13 +251,66 @@ function sendPendingPaymentEmails() {
   });
 }
 
+// Returns true when Resend accepted the email.
 function sendPaymentEmail_(applicant, rowNote, reportedAt) {
-  MailApp.sendEmail({
-    to: ADMIN_EMAIL,
+  return sendEmail_({
     subject: "Bootcamp payment confirmation requested — " + applicant.fullName,
-    body: paymentEmailBody_(applicant, rowNote, reportedAt),
+    text: paymentEmailBody_(applicant, rowNote, reportedAt),
     replyTo: applicant.email,
+  }).ok;
+}
+
+// Sends one email to ADMIN_EMAIL through Resend. Never throws: it returns
+// { ok, status, detail } so callers decide what a failure means. Secrets are
+// never logged.
+function sendEmail_(message) {
+  try {
+    const properties = PropertiesService.getScriptProperties();
+    const apiKey = properties.getProperty("RESEND_API_KEY");
+    if (!apiKey) {
+      console.error("RESEND_API_KEY script property is not set");
+      return { ok: false, status: 0, detail: "RESEND_API_KEY is not set" };
+    }
+
+    const body = {
+      from: properties.getProperty("RESEND_FROM") || DEFAULT_FROM,
+      to: [ADMIN_EMAIL],
+      subject: message.subject,
+      text: message.text,
+    };
+    if (message.replyTo) body.reply_to = message.replyTo;
+
+    const response = UrlFetchApp.fetch(RESEND_ENDPOINT, {
+      method: "post",
+      contentType: "application/json",
+      headers: { Authorization: "Bearer " + apiKey },
+      payload: JSON.stringify(body),
+      muteHttpExceptions: true,
+    });
+
+    const status = response.getResponseCode();
+    if (status >= 200 && status < 300) {
+      return { ok: true, status: status, detail: "" };
+    }
+    const detail = String(response.getContentText()).slice(0, 300);
+    console.error("Resend rejected the email (" + status + "): " + detail);
+    return { ok: false, status: status, detail: detail };
+  } catch (error) {
+    console.error(error);
+    return { ok: false, status: 0, detail: String(error) };
+  }
+}
+
+// Run this from the Apps Script editor to check the Resend setup. It sends a
+// test email to ADMIN_EMAIL and logs the outcome. The first run also asks you
+// to approve the "connect to an external service" permission.
+function sendTestEmail() {
+  const result = sendEmail_({
+    subject: "Bootcamp form: Resend test",
+    text: "If you can read this, the bootcamp form can send email through Resend.",
   });
+  console.log(JSON.stringify(result));
+  return result;
 }
 
 function paymentEmailBody_(applicant, rowNote, reportedAt) {
@@ -359,10 +417,6 @@ function appendApplicant_(sheet, columns, applicant) {
   return row;
 }
 
-function mailQuotaAvailable_() {
-  return MailApp.getRemainingDailyQuota() > MIN_MAIL_QUOTA;
-}
-
 // Logs every rejected submission and emails the admin about it, at most once
 // per hour. A rejection of a real applicant means the form and this script
 // disagree about what is valid.
@@ -370,12 +424,11 @@ function reportRejection_(code, parameters) {
   try {
     console.error("Rejected submission: " + code);
     const cache = CacheService.getScriptCache();
-    if (cache.get("rejection_alert") || !mailQuotaAvailable_()) return;
+    if (cache.get("rejection_alert")) return;
     cache.put("rejection_alert", "1", REJECTION_ALERT_SECONDS);
-    MailApp.sendEmail({
-      to: ADMIN_EMAIL,
+    sendEmail_({
       subject: "Bootcamp form rejected a submission",
-      body: [
+      text: [
         "The registration script rejected a submission: " + code,
         "",
         "Action: " + clean_(parameters.action, 40),
@@ -399,11 +452,9 @@ function reportRejection_(code, parameters) {
 // otherwise go unnoticed. Email the admin the submission so it is not lost.
 function notifyFailure_(error, parameters) {
   try {
-    if (!mailQuotaAvailable_()) return;
-    MailApp.sendEmail({
-      to: ADMIN_EMAIL,
+    sendEmail_({
       subject: "Bootcamp form error — action needed",
-      body: [
+      text: [
         "The bootcamp registration script failed: " + String(error),
         "",
         "Action: " + clean_(parameters.action, 40),
