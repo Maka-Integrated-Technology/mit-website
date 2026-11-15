@@ -15,6 +15,10 @@ WORKDIR /app
 # .dockerignore excludes .env.*, so pass the public origin explicitly.
 ARG VITE_SITE_URL=https://makatechlimited.com
 ENV VITE_SITE_URL=$VITE_SITE_URL
+# Set with --build-arg VITE_BOOTCAMP_REGISTRATION_URL=<Apps Script /exec URL>.
+# Without it the bootcamp form is disabled in the built site.
+ARG VITE_BOOTCAMP_REGISTRATION_URL=
+ENV VITE_BOOTCAMP_REGISTRATION_URL=$VITE_BOOTCAMP_REGISTRATION_URL
 RUN npm run build
 
 FROM node:20-alpine

@@ -17,6 +17,9 @@ services:
   app-prod:
     build:
       context: .
+      args:
+        VITE_BOOTCAMP_REGISTRATION_URL: ${VITE_BOOTCAMP_REGISTRATION_URL:-}
+        VITE_SITE_URL: ${VITE_SITE_URL:-https://makatechlimited.com}
     ports:
       - "3000:3000"
     environment:

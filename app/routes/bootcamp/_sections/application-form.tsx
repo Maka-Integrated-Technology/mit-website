@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Formik, useField, type FormikHelpers } from "formik";
+import { useEffect, useRef, useState } from "react";
+import { Formik, useField, useFormikContext, type FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { ArrowRight, CheckCircle2, LockKeyhole } from "lucide-react";
 import { Button } from "~/components/ui/button";
@@ -59,7 +59,7 @@ type ApplicationValues = {
   equipment: string;
   tuitionAcknowledged: boolean;
   dataConsent: boolean;
-  website: string;
+  hp_field: string;
 };
 
 const INITIAL_VALUES: ApplicationValues = {
@@ -76,7 +76,7 @@ const INITIAL_VALUES: ApplicationValues = {
   equipment: "",
   tuitionAcknowledged: false,
   dataConsent: false,
-  website: "",
+  hp_field: "",
 };
 
 const VALIDATION_SCHEMA: Yup.ObjectSchema<ApplicationValues> = Yup.object({
@@ -116,9 +116,10 @@ const VALIDATION_SCHEMA: Yup.ObjectSchema<ApplicationValues> = Yup.object({
   dataConsent: Yup.boolean()
     .oneOf([true], "Consent is required to process your application")
     .defined(),
-  // Honeypot. Formik converts "" to undefined before validating, so this must
-  // not use .defined(); any non-empty value still fails max(0).
-  website: Yup.string().max(0).default(""),
+  // Honeypot with an unguessable name so browser autofill does not fill it.
+  // Formik converts "" to undefined before validating, so this must not use
+  // .defined(); any non-empty value still fails max(0).
+  hp_field: Yup.string().max(0).default(""),
 });
 
 type TextFieldProps = {
@@ -146,6 +147,7 @@ function TextField({
       {label} {required && <span className="text-primary">*</span>}
       <Input
         {...field}
+        aria-describedby={error ? `${name}-error` : undefined}
         aria-invalid={Boolean(error)}
         autoComplete={autoComplete}
         className="font-normal"
@@ -153,7 +155,7 @@ function TextField({
         placeholder={placeholder}
         type={type}
       />
-      {error && <FieldError>{error}</FieldError>}
+      {error && <FieldError id={`${name}-error`}>{error}</FieldError>}
     </label>
   );
 }
@@ -179,6 +181,7 @@ function SelectField({
       {label} {required && <span className="text-primary">*</span>}
       <select
         {...field}
+        aria-describedby={error ? `${name}-error` : undefined}
         aria-invalid={Boolean(error)}
         className="bg-input-background border-border focus-visible:ring-ring mt-2 flex h-12 w-full rounded-xl border px-4 text-sm outline-none focus-visible:ring-2"
         id={name}
@@ -192,7 +195,7 @@ function SelectField({
           </option>
         ))}
       </select>
-      {error && <FieldError>{error}</FieldError>}
+      {error && <FieldError id={`${name}-error`}>{error}</FieldError>}
     </label>
   );
 }
@@ -218,13 +221,14 @@ function TextAreaField({
       {label} {required && <span className="text-primary">*</span>}
       <textarea
         {...field}
+        aria-describedby={error ? `${name}-error` : undefined}
         aria-invalid={Boolean(error)}
         className="bg-input-background border-border focus-visible:ring-ring mt-2 min-h-28 w-full resize-y rounded-xl border px-4 py-3 text-sm font-normal outline-none focus-visible:ring-2"
         id={name}
         maxLength={1000}
         placeholder={placeholder}
       />
-      {error && <FieldError>{error}</FieldError>}
+      {error && <FieldError id={`${name}-error`}>{error}</FieldError>}
     </label>
   );
 }
@@ -248,6 +252,8 @@ function CheckboxField({
         htmlFor={name}
       >
         <Checkbox
+          aria-describedby={error ? `${name}-error` : undefined}
+          aria-invalid={Boolean(error)}
           checked={field.value}
           id={name}
           name={field.name}
@@ -259,30 +265,83 @@ function CheckboxField({
           {label} {required && <span className="text-primary">*</span>}
         </span>
       </label>
-      {error && <FieldError>{error}</FieldError>}
+      {error && <FieldError id={`${name}-error`}>{error}</FieldError>}
     </div>
   );
 }
 
 function HoneypotField() {
-  const [field] = useField<string>("website");
+  const [field] = useField<string>("hp_field");
 
   return (
-    <label aria-hidden="true" className="hidden" htmlFor="website">
+    <label aria-hidden="true" className="hidden" htmlFor="hp_field">
       Leave this field empty
-      <input {...field} autoComplete="off" id="website" tabIndex={-1} />
+      <input {...field} autoComplete="off" id="hp_field" tabIndex={-1} />
     </label>
   );
 }
 
-function FieldError({ children }: { children: string }) {
+// Moves focus to the first invalid field after a failed submit so the error is
+// never off-screen. Errors on the hidden honeypot have no visible field, so
+// show a general message instead of failing silently.
+function FocusFirstError() {
+  const { isSubmitting, isValid, setStatus } =
+    useFormikContext<ApplicationValues>();
+  const wasSubmitting = useRef(false);
+
+  useEffect(() => {
+    if (wasSubmitting.current && !isSubmitting && !isValid) {
+      const invalid = document.querySelector<HTMLElement>(
+        "form [aria-invalid='true']"
+      );
+      if (invalid) {
+        setStatus(undefined);
+        // "instant" overrides the page's smooth scrolling, which focus() would
+        // otherwise cancel.
+        invalid.scrollIntoView({ behavior: "instant", block: "center" });
+        invalid.focus({ preventScroll: true });
+      } else {
+        setStatus("invalid");
+      }
+    }
+    wasSubmitting.current = isSubmitting;
+  }, [isSubmitting, isValid, setStatus]);
+
+  return null;
+}
+
+function FieldError({
+  alert = false,
+  children,
+  id,
+}: {
+  alert?: boolean;
+  children: string;
+  id?: string;
+}) {
   return (
-    <span className="text-destructive mt-1 block text-xs">{children}</span>
+    <span
+      className="text-destructive mt-1 block text-xs"
+      id={id}
+      role={alert ? "alert" : undefined}
+    >
+      {children}
+    </span>
   );
+}
+
+// Identifies one application across the registration request, any retry, and
+// the payment notice, so the sheet never holds duplicates and the admin can
+// match a payment to its row.
+function createApplicationId() {
+  return typeof crypto !== "undefined" && "randomUUID" in crypto
+    ? crypto.randomUUID()
+    : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
 }
 
 async function submitApplication(
   values: ApplicationValues,
+  applicationId: string,
   actions: FormikHelpers<ApplicationValues>,
   onStateChange: (state: SubmissionState) => void
 ): Promise<boolean> {
@@ -293,6 +352,7 @@ async function submitApplication(
 
   const payload = new URLSearchParams({
     action: "register",
+    applicationId,
     fullName: values.fullName.trim(),
     email: values.email.trim(),
     phone: values.phone.trim(),
@@ -306,7 +366,7 @@ async function submitApplication(
     equipment: values.equipment,
     tuitionAcknowledged: values.tuitionAcknowledged ? "Yes" : "",
     dataConsent: values.dataConsent ? "Yes" : "",
-    website: values.website,
+    hp_field: values.hp_field,
   });
 
   try {
@@ -324,11 +384,15 @@ async function submitApplication(
   }
 }
 
-async function notifyPaymentSubmitted(values: ApplicationValues) {
+async function notifyPaymentSubmitted(
+  values: ApplicationValues,
+  applicationId: string
+) {
   if (!REGISTRATION_URL) throw new Error("Registration endpoint is missing");
 
   const payload = new URLSearchParams({
     action: "payment_confirmation",
+    applicationId,
     fullName: values.fullName.trim(),
     email: values.email.trim(),
     phone: values.phone.trim(),
@@ -360,13 +424,14 @@ export default function ApplicationForm() {
   const [isSendingPaymentNotice, setIsSendingPaymentNotice] = useState(false);
   const [submittedValues, setSubmittedValues] =
     useState<ApplicationValues | null>(null);
+  const [applicationId] = useState(createApplicationId);
 
   async function handlePaymentConfirmation() {
     if (!submittedValues || isSendingPaymentNotice) return;
 
     setIsSendingPaymentNotice(true);
     try {
-      await notifyPaymentSubmitted(submittedValues);
+      await notifyPaymentSubmitted(submittedValues, applicationId);
       setPaymentNoticeState("sent");
       setPaymentModalOpen(false);
     } catch {
@@ -393,21 +458,21 @@ export default function ApplicationForm() {
             Your application is saved. Pay the ₦70,000 tuition using the account
             details, then let us know so our team can confirm your payment.
           </p>
-          {paymentNoticeState === "sent" ? (
+          {paymentNoticeState === "sent" && (
             <p className="text-primary mt-5 text-sm font-medium">
               Your payment notice was submitted. Maka Tech will verify the
               transfer and contact you by email or WhatsApp.
             </p>
-          ) : (
-            <Button
-              className="mt-6 rounded-full px-7"
-              onClick={() => setPaymentModalOpen(true)}
-            >
-              View payment details
-            </Button>
           )}
+          <Button
+            className="mt-6 rounded-full px-7"
+            onClick={() => setPaymentModalOpen(true)}
+            variant={paymentNoticeState === "sent" ? "outline" : "default"}
+          >
+            View payment details
+          </Button>
           {paymentNoticeState === "error" && (
-            <FieldError>
+            <FieldError alert>
               We could not send the payment notice. Please try again or email
               info@makatechlimited.com.
             </FieldError>
@@ -431,6 +496,7 @@ export default function ApplicationForm() {
             onSubmit={async (values, actions) => {
               const submitted = await submitApplication(
                 values,
+                applicationId,
                 actions,
                 setSubmissionState
               );
@@ -442,7 +508,7 @@ export default function ApplicationForm() {
             }}
             validationSchema={VALIDATION_SCHEMA}
           >
-            {({ handleSubmit, isSubmitting }) => (
+            {({ handleSubmit, isSubmitting, status }) => (
               <form className="grid gap-6" noValidate onSubmit={handleSubmit}>
                 <div className="grid gap-5 sm:grid-cols-2">
                   <TextField
@@ -469,7 +535,6 @@ export default function ApplicationForm() {
                     type="tel"
                   />
                   <TextField
-                    autoComplete="address-level2"
                     label="City and country"
                     name="location"
                     placeholder="e.g. Lagos, Nigeria"
@@ -551,9 +616,17 @@ export default function ApplicationForm() {
                 </div>
 
                 <HoneypotField />
+                <FocusFirstError />
+
+                {status === "invalid" && (
+                  <FieldError alert>
+                    We could not check your form. Please refresh the page and
+                    try again, or email info@makatechlimited.com.
+                  </FieldError>
+                )}
 
                 {submissionState === "error" && (
-                  <FieldError>
+                  <FieldError alert>
                     {REGISTRATION_URL
                       ? "We could not send your application. Please try again or email info@makatechlimited.com."
                       : "Online registration is being connected. Please email info@makatechlimited.com to apply."}
@@ -625,10 +698,16 @@ export default function ApplicationForm() {
               </div>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed">
-              After transferring, select “I have paid” to notify our team. Your
-              application details will be included so an administrator can
-              verify your payment.
+              {paymentNoticeState === "sent"
+                ? "Your payment notice has been sent. An administrator will verify the transfer and contact you."
+                : "After transferring, select “I have paid” to notify our team. Your application details will be included so an administrator can verify your payment."}
             </p>
+            {paymentNoticeState === "error" && (
+              <FieldError alert>
+                We could not send the payment notice. Please try again or email
+                info@makatechlimited.com.
+              </FieldError>
+            )}
           </div>
           <DialogFooter className="flex-col-reverse sm:flex-row">
             <Button
@@ -636,15 +715,17 @@ export default function ApplicationForm() {
               onClick={() => setPaymentModalOpen(false)}
               variant="outline"
             >
-              Cancel
+              {paymentNoticeState === "sent" ? "Close" : "Cancel"}
             </Button>
-            <Button
-              className="rounded-full"
-              isLoading={isSendingPaymentNotice}
-              onClick={handlePaymentConfirmation}
-            >
-              I have paid
-            </Button>
+            {paymentNoticeState !== "sent" && (
+              <Button
+                className="rounded-full"
+                isLoading={isSendingPaymentNotice}
+                onClick={handlePaymentConfirmation}
+              >
+                I have paid
+              </Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
