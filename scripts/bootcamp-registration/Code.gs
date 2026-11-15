@@ -69,6 +69,15 @@ const ADMIN_EMAIL = "makatechlimited@gmail.com";
 // MailApp has a small daily quota. Keep some in reserve for failure alerts.
 const MIN_MAIL_QUOTA = 10;
 
+// Written to "Payment reported at" when a payment was reported but the admin
+// email could not be sent (mail quota). A retry, or sendPendingPaymentEmails(),
+// sends it later.
+const EMAIL_PENDING = "Email pending — ";
+
+// At most one "submission rejected" alert per hour, so junk requests cannot use
+// up the mail quota.
+const REJECTION_ALERT_SECONDS = 3600;
+
 function doPost(event) {
   const parameters = event && event.parameter ? event.parameter : {};
 
@@ -77,7 +86,11 @@ function doPost(event) {
     if (parameters.hp_field) return response_("ok");
 
     const parsed = parseApplicant_(parameters);
-    if (parsed.error) return response_(parsed.error);
+    if (parsed.error) {
+      // The website cannot see this response, so make the rejection visible.
+      reportRejection_(parsed.error, parameters);
+      return response_(parsed.error);
+    }
 
     if (parameters.action === "payment_confirmation") {
       return handlePaymentConfirmation_(parsed.applicant);
@@ -172,23 +185,73 @@ function handlePaymentConfirmation_(applicant) {
     }
 
     const paidCell = sheet.getRange(row, columns.paid);
-    if (paidCell.getValue()) return response_("ok"); // Already reported.
+    const existing = String(paidCell.getValue() || "");
+    // Already reported and emailed. A pending marker means the email still
+    // needs sending, so a retry is allowed through.
+    if (existing && existing.indexOf(EMAIL_PENDING) !== 0) {
+      return response_("ok");
+    }
 
     const reportedAt = new Date().toISOString();
     if (mailQuotaAvailable_()) {
-      MailApp.sendEmail({
-        to: ADMIN_EMAIL,
-        subject:
-          "Bootcamp payment confirmation requested — " + applicant.fullName,
-        body: paymentEmailBody_(applicant, rowNote, reportedAt),
-        replyTo: applicant.email,
-      });
+      sendPaymentEmail_(applicant, rowNote, reportedAt);
+      paidCell.setValue(reportedAt);
+    } else {
+      // Out of mail quota. Mark the row so the payment is visible in the sheet
+      // and can be emailed later without being lost.
+      paidCell.setValue(EMAIL_PENDING + reportedAt);
     }
-    // Recorded even when the email is skipped so the sheet stays the source
-    // of truth for who has reported paying.
-    paidCell.setValue(reportedAt);
 
     return response_("ok");
+  });
+}
+
+// Emails the admin for every row marked "Email pending". Run it by hand, or
+// add a daily time-driven trigger, after the mail quota resets.
+function sendPendingPaymentEmails() {
+  return withApplicationsSheet_(function (sheet, columns) {
+    const lastRow = sheet.getLastRow();
+    let sent = 0;
+
+    for (let row = 2; row <= lastRow; row++) {
+      const paidCell = sheet.getRange(row, columns.paid);
+      const value = String(paidCell.getValue() || "");
+      if (value.indexOf(EMAIL_PENDING) !== 0) continue;
+      if (!mailQuotaAvailable_()) break;
+
+      const v = sheet.getRange(row, 1, 1, CORE_HEADERS.length).getValues()[0];
+      const reportedAt = value.slice(EMAIL_PENDING.length);
+      sendPaymentEmail_(
+        {
+          applicationId: String(sheet.getRange(row, columns.id).getValue()),
+          fullName: String(v[1]),
+          email: String(v[2]),
+          phone: String(v[3]),
+          location: String(v[4]),
+          track: String(v[5]),
+          currentStatus: String(v[6]),
+          experience: String(v[7]),
+          motivation: String(v[8]),
+          goal: String(v[9]),
+          availability: String(v[10]),
+          equipment: String(v[11]),
+        },
+        "Sent later from sheet row " + row + " (mail quota was used up).",
+        reportedAt
+      );
+      paidCell.setValue(reportedAt);
+      sent++;
+    }
+    return sent;
+  });
+}
+
+function sendPaymentEmail_(applicant, rowNote, reportedAt) {
+  MailApp.sendEmail({
+    to: ADMIN_EMAIL,
+    subject: "Bootcamp payment confirmation requested — " + applicant.fullName,
+    body: paymentEmailBody_(applicant, rowNote, reportedAt),
+    replyTo: applicant.email,
   });
 }
 
@@ -298,6 +361,38 @@ function appendApplicant_(sheet, columns, applicant) {
 
 function mailQuotaAvailable_() {
   return MailApp.getRemainingDailyQuota() > MIN_MAIL_QUOTA;
+}
+
+// Logs every rejected submission and emails the admin about it, at most once
+// per hour. A rejection of a real applicant means the form and this script
+// disagree about what is valid.
+function reportRejection_(code, parameters) {
+  try {
+    console.error("Rejected submission: " + code);
+    const cache = CacheService.getScriptCache();
+    if (cache.get("rejection_alert") || !mailQuotaAvailable_()) return;
+    cache.put("rejection_alert", "1", REJECTION_ALERT_SECONDS);
+    MailApp.sendEmail({
+      to: ADMIN_EMAIL,
+      subject: "Bootcamp form rejected a submission",
+      body: [
+        "The registration script rejected a submission: " + code,
+        "",
+        "Action: " + clean_(parameters.action, 40),
+        "Application ID: " + clean_(parameters.applicationId, 64),
+        "Name: " + singleLine_(parameters.fullName, 200),
+        "Email: " + singleLine_(parameters.email, 254),
+        "Phone: " + singleLine_(parameters.phone, 50),
+        "Track: " + clean_(parameters.track, 100),
+        "",
+        "If this was a real applicant, the form and Code.gs disagree about what is",
+        "valid, and they need to be contacted. Further rejections in the next hour",
+        "are logged in Apps Script executions but not emailed.",
+      ].join("\n"),
+    });
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 // The website cannot read this script's responses, so a failed save would

@@ -79,14 +79,30 @@ const INITIAL_VALUES: ApplicationValues = {
   hp_field: "",
 };
 
+// Same pattern as the email check in Code.gs (requires a dot in the domain).
+const SERVER_EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const VALIDATION_SCHEMA: Yup.ObjectSchema<ApplicationValues> = Yup.object({
-  fullName: Yup.string().trim().required("Enter your full name"),
+  // These limits and the email pattern must match the checks in
+  // scripts/bootcamp-registration/Code.gs, which rejects anything stricter
+  // than the form without telling the applicant.
+  fullName: Yup.string()
+    .trim()
+    .max(200, "Keep your name under 200 characters")
+    .required("Enter your full name"),
   email: Yup.string()
     .trim()
-    .email("Enter a valid email address")
+    .max(254, "Enter a valid email address")
+    .matches(SERVER_EMAIL_PATTERN, "Enter a valid email address")
     .required("Enter your email address"),
-  phone: Yup.string().trim().required("Enter a phone or WhatsApp number"),
-  location: Yup.string().trim().required("Enter your city and country"),
+  phone: Yup.string()
+    .trim()
+    .max(50, "Keep your number under 50 characters")
+    .required("Enter a phone or WhatsApp number"),
+  location: Yup.string()
+    .trim()
+    .max(200, "Keep your answer under 200 characters")
+    .required("Enter your city and country"),
   track: Yup.string()
     .oneOf(TRACKS, "Choose one of the listed tracks")
     .required("Choose your preferred track"),
