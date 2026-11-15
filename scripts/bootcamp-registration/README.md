@@ -55,8 +55,18 @@ admin email is sent only once per application. If the registration never
 reached the sheet, the payment notice creates the row so the applicant is not
 lost. Phone numbers are stored as text so a leading zero is kept.
 
-The browser cannot see failures, so when the script throws (for example a
-header mismatch or a lock timeout) it emails the admin the applicant's details
-with the subject "Bootcamp form error — action needed". Emails are skipped when
-Google's daily mail quota is nearly used up; the sheet is still updated. The payment notice is an applicant's self-report only; an admin must
+The browser cannot see failures, so the script emails the admin in two cases:
+
+- It throws (for example a header mismatch or a lock timeout): the subject is
+  "Bootcamp form error — action needed" and the applicant's details are included.
+- It rejects a submission as invalid: the subject is "Bootcamp form rejected a
+  submission". This means the form and `Code.gs` disagree about what is valid,
+  or someone is posting junk. At most one of these is sent per hour; every
+  rejection is also logged under **Executions** in Apps Script.
+
+Google limits how many emails a script can send per day. When the quota is
+nearly used up, alerts are skipped and a payment notice is recorded in the sheet
+as `Email pending — <time>` instead of being emailed. The applicant's retry, or
+running `sendPendingPaymentEmails` (by hand, or from a daily time-driven trigger
+under **Triggers**), sends those emails once the quota has reset. The payment notice is an applicant's self-report only; an admin must
 verify the transfer before confirming registration.
