@@ -39,6 +39,22 @@ Google's mail service. The script calls Resend's HTTP API.
    that owns the script), then check that the test email arrives at the admin
    address. The result is also written to the execution log.
 
+If the test fails with "You do not have permission to call UrlFetchApp.fetch.
+Required permissions: …script.external_request", Google has not granted that
+permission to the project. Open **Project Settings**, turn on **Show
+"appsscript.json" manifest file in editor**, and open `appsscript.json`:
+
+- If it has an `oauthScopes` list, add
+  `"https://www.googleapis.com/auth/script.external_request"` to it. The script
+  needs exactly two scopes: that one and
+  `"https://www.googleapis.com/auth/spreadsheets"`. Save, then run
+  `sendTestEmail` again and approve the prompt.
+- If it has no `oauthScopes` list, remove the project's access at
+  <https://myaccount.google.com/permissions>, then run `sendTestEmail` again so
+  Google asks for approval afresh.
+
+After approving, deploy a **New version** so the live web app uses it.
+
 **Never put the API key in `Code.gs`, in the website, or in the repository.** It
 belongs only in Script properties. If a key is ever shared or committed, delete
 it in Resend and create a new one.
