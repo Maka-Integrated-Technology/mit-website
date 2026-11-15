@@ -21,6 +21,10 @@ does not need a separately hosted API server.
 
 The script writes to the `Applications` tab of the supplied spreadsheet. It
 creates the header row on the first valid submission only if that tab is empty.
+The first 14 columns are fixed. The script adds two more header cells, **Application ID**
+and **Payment reported at**, to the end of an existing header row if they are missing,
+so sheets from earlier versions upgrade themselves. Do not rename, reorder or
+delete the first 14 columns: the script refuses to write if they change.
 Do not publish or share the response sheet with applicants.
 
 ## Form behavior
@@ -38,7 +42,21 @@ the website can confirm that the request was dispatched, but cannot confirm
 that Google Sheets saved the row or that Google sent the email. Check both the
 Applications sheet and the admin inbox after deployment.
 
-The script validates required fields and track names, rejects a basic hidden
-honeypot field, and protects text values from being interpreted as spreadsheet
-formulas. The payment notice is an applicant's self-report only; an admin must
+The script validates every field on both requests (required fields, the track
+and the other dropdown options, email format, and length limits), rejects a
+hidden honeypot field (`hp_field`), and protects text values from being
+interpreted as spreadsheet formulas. The option lists in `Code.gs` must be kept
+in sync with `application-form.tsx`.
+
+Each application carries a browser-generated **Application ID**. A repeated
+registration with the same ID is ignored, so retries never create duplicates.
+The payment notice finds the row by ID and fills **Payment reported at**; the
+admin email is sent only once per application. If the registration never
+reached the sheet, the payment notice creates the row so the applicant is not
+lost. Phone numbers are stored as text so a leading zero is kept.
+
+The browser cannot see failures, so when the script throws (for example a
+header mismatch or a lock timeout) it emails the admin the applicant's details
+with the subject "Bootcamp form error — action needed". Emails are skipped when
+Google's daily mail quota is nearly used up; the sheet is still updated. The payment notice is an applicant's self-report only; an admin must
 verify the transfer before confirming registration.

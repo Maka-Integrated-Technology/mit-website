@@ -276,10 +276,9 @@ export default function BootcampPage() {
               Start your next chapter.
             </h2>
             <p className="text-muted-foreground mt-5 leading-relaxed">
-              The first cohort begins in early January 2027. When registration
-              opens, choose your track and share your details. Maka Tech will
-              follow up with application decisions and program schedule
-              information.
+              The first cohort begins in early January 2027. Choose your track
+              and share your details. Maka Tech will follow up with application
+              decisions and program schedule information.
             </p>
             <div className="border-border bg-background mt-7 rounded-2xl border p-5">
               <p className="text-sm font-semibold">What to expect</p>

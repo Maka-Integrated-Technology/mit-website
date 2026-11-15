@@ -14,7 +14,36 @@ const TRACKS = [
   "Video Editing",
 ];
 
-const HEADERS = [
+// Keep these option lists in sync with the form in
+// app/routes/bootcamp/_sections/application-form.tsx.
+const CURRENT_STATUSES = [
+  "Student",
+  "Graduate",
+  "Employed",
+  "Career changer",
+  "Other",
+];
+const EXPERIENCE_LEVELS = [
+  "New to this",
+  "Some self-study or practice",
+  "Have completed projects",
+  "Already working in this area",
+];
+const AVAILABILITY_OPTIONS = [
+  "Yes, I can commit to the full 3 months",
+  "I may need to discuss my availability",
+];
+const EQUIPMENT_OPTIONS = [
+  "Yes",
+  "Internet access, but I need laptop support",
+  "Laptop access, but I need internet support",
+  "I need support with both",
+];
+
+// The first columns are fixed. "Application ID" and "Payment reported at" are
+// located by header name and added to the end of the header row if missing, so
+// sheets created by earlier versions of this script keep working.
+const CORE_HEADERS = [
   "Submitted at",
   "Full name",
   "Email",
@@ -30,121 +59,58 @@ const HEADERS = [
   "Tuition acknowledged",
   "Application data consent",
 ];
+const ID_HEADER = "Application ID";
+const PAID_HEADER = "Payment reported at";
 
 const SPREADSHEET_ID = "1Bs96kxMjeZ1j05RF4zkyCW1kvnlcVNsg4ZNg7QMyMm4";
+const SHEET_NAME = "Applications";
+const ADMIN_EMAIL = "makatechlimited@gmail.com";
+
+// MailApp has a small daily quota. Keep some in reserve for failure alerts.
+const MIN_MAIL_QUOTA = 10;
 
 function doPost(event) {
+  const parameters = event && event.parameter ? event.parameter : {};
+
   try {
-    const parameters = event && event.parameter ? event.parameter : {};
+    // Hidden field that real visitors never fill in. Applies to every action.
+    if (parameters.hp_field) return response_("ok");
+
+    const parsed = parseApplicant_(parameters);
+    if (parsed.error) return response_(parsed.error);
 
     if (parameters.action === "payment_confirmation") {
-      return sendPaymentConfirmation_(parameters);
+      return handlePaymentConfirmation_(parsed.applicant);
     }
-
-    // The form includes a hidden field to catch basic automated submissions.
-    if (parameters.website) return response_("ok");
-
-    const applicant = {
-      fullName: clean_(parameters.fullName),
-      email: clean_(parameters.email).toLowerCase(),
-      phone: clean_(parameters.phone),
-      location: clean_(parameters.location),
-      track: clean_(parameters.track),
-      currentStatus: clean_(parameters.currentStatus),
-      experience: clean_(parameters.experience),
-      motivation: clean_(parameters.motivation),
-      goal: clean_(parameters.goal),
-      availability: clean_(parameters.availability),
-      equipment: clean_(parameters.equipment),
-      tuitionAcknowledged: parameters.tuitionAcknowledged === "Yes",
-      dataConsent: parameters.dataConsent === "Yes",
-    };
-
-    if (
-      !applicant.fullName ||
-      !applicant.email ||
-      !applicant.phone ||
-      !applicant.location ||
-      !applicant.track ||
-      !applicant.currentStatus ||
-      !applicant.motivation ||
-      !applicant.goal ||
-      !applicant.availability ||
-      !applicant.equipment ||
-      !applicant.tuitionAcknowledged ||
-      !applicant.dataConsent
-    ) {
-      return response_("missing_required_fields");
-    }
-
-    if (!TRACKS.includes(applicant.track)) return response_("invalid_track");
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(applicant.email)) {
-      return response_("invalid_email");
-    }
-
-    const lock = LockService.getScriptLock();
-    lock.waitLock(10000);
-    try {
-      const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
-      const sheet = spreadsheet.getSheetByName("Applications");
-      if (!sheet) throw new Error('Missing "Applications" tab');
-      if (sheet.getLastRow() === 0) {
-        sheet.appendRow(HEADERS);
-        sheet.setFrozenRows(1);
-      } else {
-        const existingHeaders = sheet
-          .getRange(1, 1, 1, HEADERS.length)
-          .getDisplayValues()[0];
-        if (JSON.stringify(existingHeaders) !== JSON.stringify(HEADERS)) {
-          throw new Error(
-            "Applications header row does not match the form schema"
-          );
-        }
-      }
-
-      sheet.appendRow([
-        new Date().toISOString(),
-        safeCell_(applicant.fullName),
-        safeCell_(applicant.email),
-        safeCell_(applicant.phone),
-        safeCell_(applicant.location),
-        applicant.track,
-        safeCell_(applicant.currentStatus),
-        safeCell_(applicant.experience),
-        safeCell_(applicant.motivation),
-        safeCell_(applicant.goal),
-        safeCell_(applicant.availability),
-        safeCell_(applicant.equipment),
-        "Yes",
-        "Yes",
-      ]);
-    } finally {
-      lock.releaseLock();
-    }
-
-    return response_("ok");
+    return handleRegistration_(parsed.applicant);
   } catch (error) {
     console.error(error);
+    notifyFailure_(error, parameters);
     return response_("error");
   }
 }
 
-function sendPaymentConfirmation_(parameters) {
+function parseApplicant_(parameters) {
   const applicant = {
-    fullName: clean_(parameters.fullName),
-    email: clean_(parameters.email).toLowerCase(),
-    phone: clean_(parameters.phone),
-    location: clean_(parameters.location),
-    track: clean_(parameters.track),
-    currentStatus: clean_(parameters.currentStatus),
-    experience: clean_(parameters.experience),
-    motivation: clean_(parameters.motivation),
-    goal: clean_(parameters.goal),
-    availability: clean_(parameters.availability),
-    equipment: clean_(parameters.equipment),
+    applicationId: clean_(parameters.applicationId, 64),
+    fullName: singleLine_(parameters.fullName, 200),
+    email: singleLine_(parameters.email, 254).toLowerCase(),
+    phone: singleLine_(parameters.phone, 50),
+    location: singleLine_(parameters.location, 200),
+    track: clean_(parameters.track, 100),
+    currentStatus: clean_(parameters.currentStatus, 100),
+    experience: clean_(parameters.experience, 100),
+    motivation: clean_(parameters.motivation, 1000),
+    goal: clean_(parameters.goal, 1000),
+    availability: clean_(parameters.availability, 100),
+    equipment: clean_(parameters.equipment, 100),
     tuitionAcknowledged: parameters.tuitionAcknowledged === "Yes",
     dataConsent: parameters.dataConsent === "Yes",
   };
+
+  if (!/^[A-Za-z0-9-]{8,64}$/.test(applicant.applicationId)) {
+    return { error: "invalid_application_id" };
+  }
 
   if (
     !applicant.fullName ||
@@ -152,22 +118,90 @@ function sendPaymentConfirmation_(parameters) {
     !applicant.phone ||
     !applicant.location ||
     !applicant.track ||
+    !applicant.currentStatus ||
+    !applicant.experience ||
     !applicant.motivation ||
-    !applicant.goal
+    !applicant.goal ||
+    !applicant.availability ||
+    !applicant.equipment ||
+    !applicant.tuitionAcknowledged ||
+    !applicant.dataConsent
   ) {
-    return response_("missing_required_fields");
+    return { error: "missing_required_fields" };
   }
 
+  if (!TRACKS.includes(applicant.track)) return { error: "invalid_track" };
+  if (
+    !CURRENT_STATUSES.includes(applicant.currentStatus) ||
+    !EXPERIENCE_LEVELS.includes(applicant.experience) ||
+    !AVAILABILITY_OPTIONS.includes(applicant.availability) ||
+    !EQUIPMENT_OPTIONS.includes(applicant.equipment)
+  ) {
+    return { error: "invalid_option" };
+  }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(applicant.email)) {
-    return response_("invalid_email");
+    return { error: "invalid_email" };
   }
 
-  const details = [
+  return { applicant: applicant };
+}
+
+function handleRegistration_(applicant) {
+  return withApplicationsSheet_(function (sheet, columns) {
+    // The site retries with the same ID, so a repeat is not a new application.
+    if (findRowById_(sheet, columns, applicant.applicationId)) {
+      return response_("ok");
+    }
+    appendApplicant_(sheet, columns, applicant);
+    return response_("ok");
+  });
+}
+
+function handlePaymentConfirmation_(applicant) {
+  return withApplicationsSheet_(function (sheet, columns) {
+    let row = findRowById_(sheet, columns, applicant.applicationId);
+    let rowNote = "Sheet row " + row + " matched this application ID.";
+
+    if (!row) {
+      // The registration request never reached the sheet, so recover it here.
+      row = appendApplicant_(sheet, columns, applicant);
+      rowNote =
+        "No sheet row matched this application ID, so row " +
+        row +
+        " was created from this payment notice.";
+    }
+
+    const paidCell = sheet.getRange(row, columns.paid);
+    if (paidCell.getValue()) return response_("ok"); // Already reported.
+
+    const reportedAt = new Date().toISOString();
+    if (mailQuotaAvailable_()) {
+      MailApp.sendEmail({
+        to: ADMIN_EMAIL,
+        subject:
+          "Bootcamp payment confirmation requested — " + applicant.fullName,
+        body: paymentEmailBody_(applicant, rowNote, reportedAt),
+        replyTo: applicant.email,
+      });
+    }
+    // Recorded even when the email is skipped so the sheet stays the source
+    // of truth for who has reported paying.
+    paidCell.setValue(reportedAt);
+
+    return response_("ok");
+  });
+}
+
+function paymentEmailBody_(applicant, rowNote, reportedAt) {
+  return [
     "An applicant has reported paying the Maka Tech Bootcamp tuition.",
     "Please verify the transfer before confirming the registration.",
     "",
     "Payment: ₦70,000 to UBA, account 1031747948",
     "Account name: Maka Integrated Technology Limited",
+    "",
+    "Application ID: " + applicant.applicationId,
+    rowNote,
     "",
     "Applicant submission:",
     "Full name: " + applicant.fullName,
@@ -181,30 +215,138 @@ function sendPaymentConfirmation_(parameters) {
     "Goal: " + applicant.goal,
     "Availability: " + applicant.availability,
     "Laptop and internet access: " + applicant.equipment,
-    "Tuition acknowledged: " + (applicant.tuitionAcknowledged ? "Yes" : "No"),
-    "Application data consent: " + (applicant.dataConsent ? "Yes" : "No"),
     "",
-    "Payment notice received: " + new Date().toISOString(),
+    "Payment notice received: " + reportedAt,
   ].join("\n");
-
-  MailApp.sendEmail({
-    to: "makatechlimited@gmail.com",
-    subject: "Bootcamp payment confirmation requested — " + applicant.fullName,
-    body: details,
-    replyTo: applicant.email,
-  });
-
-  return response_("ok");
 }
 
-function clean_(value) {
+function withApplicationsSheet_(callback) {
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const sheet =
+      SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME);
+    if (!sheet) throw new Error('Missing "' + SHEET_NAME + '" tab');
+    return callback(sheet, ensureHeaders_(sheet));
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// Returns the 1-based columns of the application ID and payment timestamp.
+function ensureHeaders_(sheet) {
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(CORE_HEADERS.concat([ID_HEADER, PAID_HEADER]));
+    sheet.setFrozenRows(1);
+    return { id: CORE_HEADERS.length + 1, paid: CORE_HEADERS.length + 2 };
+  }
+
+  const width = Math.max(sheet.getLastColumn(), CORE_HEADERS.length);
+  const header = sheet.getRange(1, 1, 1, width).getDisplayValues()[0];
+
+  for (let i = 0; i < CORE_HEADERS.length; i++) {
+    if (header[i] !== CORE_HEADERS[i]) {
+      throw new Error("Applications header row does not match the form schema");
+    }
+  }
+
+  let lastUsed = header.length;
+  while (lastUsed > 0 && header[lastUsed - 1] === "") lastUsed--;
+
+  function columnFor(name) {
+    const index = header.indexOf(name);
+    if (index !== -1) return index + 1;
+    lastUsed++;
+    sheet.getRange(1, lastUsed).setValue(name);
+    return lastUsed;
+  }
+
+  return { id: columnFor(ID_HEADER), paid: columnFor(PAID_HEADER) };
+}
+
+function findRowById_(sheet, columns, applicationId) {
+  const lastRow = sheet.getLastRow();
+  if (lastRow < 2) return 0;
+  const ids = sheet.getRange(2, columns.id, lastRow - 1, 1).getValues();
+  for (let i = 0; i < ids.length; i++) {
+    if (String(ids[i][0]) === applicationId) return i + 2;
+  }
+  return 0;
+}
+
+function appendApplicant_(sheet, columns, applicant) {
+  sheet.appendRow([
+    new Date().toISOString(),
+    safeCell_(applicant.fullName),
+    safeCell_(applicant.email),
+    textCell_(applicant.phone),
+    safeCell_(applicant.location),
+    applicant.track,
+    applicant.currentStatus,
+    applicant.experience,
+    safeCell_(applicant.motivation),
+    safeCell_(applicant.goal),
+    applicant.availability,
+    applicant.equipment,
+    "Yes",
+    "Yes",
+  ]);
+  const row = sheet.getLastRow();
+  sheet.getRange(row, columns.id).setValue(textCell_(applicant.applicationId));
+  return row;
+}
+
+function mailQuotaAvailable_() {
+  return MailApp.getRemainingDailyQuota() > MIN_MAIL_QUOTA;
+}
+
+// The website cannot read this script's responses, so a failed save would
+// otherwise go unnoticed. Email the admin the submission so it is not lost.
+function notifyFailure_(error, parameters) {
+  try {
+    if (!mailQuotaAvailable_()) return;
+    MailApp.sendEmail({
+      to: ADMIN_EMAIL,
+      subject: "Bootcamp form error — action needed",
+      body: [
+        "The bootcamp registration script failed: " + String(error),
+        "",
+        "Action: " + clean_(parameters.action, 40),
+        "Application ID: " + clean_(parameters.applicationId, 64),
+        "Name: " + singleLine_(parameters.fullName, 200),
+        "Email: " + singleLine_(parameters.email, 254),
+        "Phone: " + singleLine_(parameters.phone, 50),
+        "Track: " + clean_(parameters.track, 100),
+        "",
+        "Please check the Applications sheet and add this applicant manually if",
+        "they are missing.",
+      ].join("\n"),
+    });
+  } catch (mailError) {
+    console.error(mailError);
+  }
+}
+
+function clean_(value, maxLength) {
   return String(value || "")
     .trim()
-    .slice(0, 5000);
+    .slice(0, maxLength);
 }
 
+// For single-line fields: removes line breaks so values cannot add email
+// headers or extra lines.
+function singleLine_(value, maxLength) {
+  return clean_(String(value || "").replace(/[\r\n\t]+/g, " "), maxLength);
+}
+
+// Stops text from being interpreted as a spreadsheet formula.
 function safeCell_(value) {
   return /^[=+\-@]/.test(value) ? `'${value}` : value;
+}
+
+// Forces text so numeric-looking values such as 08031234567 keep their zero.
+function textCell_(value) {
+  return `'${value}`;
 }
 
 function response_(message) {
