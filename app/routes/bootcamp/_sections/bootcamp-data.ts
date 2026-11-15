@@ -5,38 +5,31 @@ export const BOOTCAMP_TRACKS = [
       "Frontend Development",
       "Backend Development",
       "Mobile Development",
+      "DevOps",
     ],
     description: "Learn to plan, build, and ship useful digital products.",
   },
   {
-    title: "Design, data & quality",
+    title: "Design, data & security",
     tracks: [
       "Product Design",
-      "Data Analytics",
+      "Graphic Design",
+      "Data Analysis",
+      "QA / Software Testing",
       "Cybersecurity",
-      "Artificial Intelligence",
-      "Software Testing / QA",
     ],
     description:
-      "Shape user experiences, work with data, and build reliable technology.",
+      "Shape user experiences, work with data, and build reliable, secure technology.",
   },
   {
     title: "Product & business",
-    tracks: [
-      "Project Management",
-      "Business Analysis",
-      "Technology Entrepreneurship",
-    ],
-    description: "Turn goals and user needs into well-managed technology work.",
+    tracks: ["Product Management", "Sales & Marketing"],
+    description:
+      "Connect user needs and customers to well-managed products and growth.",
   },
   {
     title: "Digital operations",
-    tracks: [
-      "Virtual Assistance",
-      "Digital Marketing",
-      "Video Editing & Content Production",
-      "Social Media Management",
-    ],
+    tracks: ["Virtual Assistant", "Video Editing"],
     description: "Build practical skills for running and growing digital work.",
   },
 ];

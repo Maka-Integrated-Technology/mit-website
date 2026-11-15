@@ -45,7 +45,20 @@ export default tseslint.config(
       // React Refresh (Vite HMR)
       "react-refresh/only-export-components": [
         "warn",
-        { allowConstantExport: true },
+        {
+          allowConstantExport: true,
+          // React Router route-module exports that are not components.
+          allowExportNames: [
+            "meta",
+            "links",
+            "handle",
+            "loader",
+            "clientLoader",
+            "action",
+            "clientAction",
+            "shouldRevalidate",
+          ],
+        },
       ],
       // TypeScript
       "@typescript-eslint/no-unused-vars": [
